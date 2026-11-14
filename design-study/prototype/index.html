@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent session patterns: mobile prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fog: #E6EAEE;
+    --paper: #FAFBFC;
+    --ink: #1C2733;
+    --ink-2: #4E5B68;
+    --ink-3: #7A8691;
+    --line: #D5DBE1;
+    --amber: #A35F00;      /* needs you */
+    --amber-wash: #FFF3E0;
+    --teal: #1F7A72;       /* working */
+    --violet: #5B4FA0;     /* lost contact */
+    --violet-wash: #EFEDF8;
+    --red: #B8322A;        /* failed */
+    --slate: #46525E;      /* blocked */
+    --slate-wash: #EDF0F3;
+    --done: #8A949D;
+    --sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+    --mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--fog); color: var(--ink); font-family: var(--sans);
+    font-size: 16px; line-height: 1.45;
+    min-height: 100vh;
+  }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid #2F6FD6; outline-offset: 2px; }
+
+  /* ---------- Page layout ---------- */
+  .stage {
+    display: grid; gap: 40px; align-items: start;
+    grid-template-columns: minmax(220px, 300px) 390px minmax(240px, 320px);
+    justify-content: center; padding: 48px 32px 64px;
+  }
+  .intro h1 { font-size: 28px; line-height: 1.15; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.01em; }
+  .intro p { color: var(--ink-2); margin: 0 0 14px; max-width: 34ch; }
+  .intro .fine { font-size: 13px; color: var(--ink-3); }
+  .jump { display: flex; flex-direction: column; gap: 6px; margin: 22px 0 18px; }
+  .jump button {
+    text-align: left; background: transparent; border: 1px solid transparent; border-radius: 8px;
+    padding: 8px 12px; cursor: pointer; display: flex; gap: 10px; align-items: center; font-size: 15px;
+  }
+  .jump button:hover { background: rgba(255,255,255,.55); }
+  .jump button[aria-current="true"] { background: var(--paper); border-color: var(--line); font-weight: 700; }
+  .jump .sig { width: 4px; height: 18px; border-radius: 2px; flex: none; }
+  .toggle { display: flex; gap: 10px; align-items: center; font-size: 15px; cursor: pointer; }
+  .toggle input { width: 18px; height: 18px; accent-color: var(--ink); }
+
+  .notes { position: sticky; top: 32px; }
+  .notes h2 { font-size: 18px; margin: 0 0 6px; }
+  .notes p { color: var(--ink-2); margin: 0 0 16px; font-size: 15px; }
+  .notes ol { padding: 0; margin: 0; list-style: none; counter-reset: n; }
+  .notes li { counter-increment: n; display: grid; grid-template-columns: 26px 1fr; gap: 8px; margin-bottom: 12px; font-size: 15px; }
+  .notes li::before {
+    content: counter(n); width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: var(--paper);
+    font-size: 12px; font-weight: 700; display: grid; place-items: center; margin-top: 1px;
+  }
+  .notes li b { display: block; }
+  .notes li span { color: var(--ink-2); }
+  .notes a { color: var(--ink); }
+
+  /* ---------- Phone ---------- */
+  .phone {
+    width: 390px; height: 800px; background: var(--paper); border-radius: 44px;
+    border: 10px solid #22303C; box-shadow: 0 30px 60px -30px rgba(28,39,51,.45);
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .statusbar { height: 44px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font-size: 14px; font-weight: 700; }
+  .screen { flex: 1; overflow-y: auto; display: none; flex-direction: column; }
+  .screen.on { display: flex; }
+
+  .topbar { padding: 6px 20px 14px; display: flex; align-items: center; gap: 10px; }
+  .topbar h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
+  .back { background: none; border: 0; padding: 6px 4px; font-size: 16px; cursor: pointer; color: var(--ink-2); }
+  .sub { padding: 0 20px 12px; color: var(--ink-2); font-size: 15px; }
+
+  /* Session list */
+  .rows { list-style: none; margin: 0; padding: 0 12px; }
+  .row {
+    display: grid; grid-template-columns: 6px 1fr; gap: 14px; width: 100%;
+    background: none; border: 0; border-bottom: 1px solid var(--line); text-align: left;
+    padding: 14px 8px; cursor: pointer;
+  }
+  .row:hover { background: rgba(28,39,51,.03); }
+  .row .bar { border-radius: 3px; }
+  .row .state { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .row .name { font-weight: 700; font-size: 17px; }
+  .row .agent { font-size: 14px; color: var(--ink-3); }
+  .row .what { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
+  .row .when { font-size: 13px; margin-top: 6px; font-weight: 600; }
+
+  /* Detail */
+  .band { padding: 4px 20px 18px; }
+  .band .state { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .band .state i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .band h3 { font-size: 26px; line-height: 1.15; font-weight: 800; margin: 8px 0 8px; letter-spacing: -0.01em; }
+  .band .who { color: var(--ink-2); font-size: 15px; }
+  .section { padding: 14px 20px; border-top: 1px solid var(--line); }
+  .section h4 { margin: 0 0 4px; font-size: 14px; color: var(--ink-3); font-weight: 600; }
+  .section p { margin: 0; }
+  .owner { font-weight: 700; }
+  details summary { cursor: pointer; color: var(--ink-2); font-size: 15px; }
+  pre {
+    font-family: var(--mono); font-size: 13px; background: var(--slate-wash); border-radius: 8px;
+    padding: 10px 12px; margin: 8px 0 0; white-space: pre-wrap; word-break: break-word;
+  }
+  code { font-family: var(--mono); font-size: 0.9em; }
+
+  /* Scope ladder */
+  fieldset { border: 0; margin: 0; padding: 0; }
+  legend { font-size: 14px; color: var(--ink-3); font-weight: 600; margin-bottom: 6px; padding: 0; }
+  .scope { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 9px 0; align-items: start; cursor: pointer; }
+  .scope input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--ink); }
+  .scope small { display: block; color: var(--ink-3); font-size: 13px; }
+  .scope.disabled { color: var(--ink-3); cursor: not-allowed; }
+
+  /* Deadline rail: the one bold element */
+  .deadline { padding: 14px 20px 14px; background: var(--amber-wash); border-top: 1px solid #F1D9B5; border-bottom: 1px solid #F1D9B5; }
+  .deadline + .section { border-top: 0; }
+  .deadline p { margin: 0 0 10px; font-size: 15px; }
+  .rail { height: 8px; background: #F1D9B5; border-radius: 4px; position: relative; overflow: hidden; }
+  .rail span { position: absolute; inset: 0 auto 0 0; background: var(--amber); border-radius: 4px; width: 88%; transform-origin: left; }
+  .rail-labels { display: flex; justify-content: space-between; font-size: 12px; color: #7A4A08; margin-top: 6px; }
+
+  .actions { position: sticky; bottom: 0; background: var(--paper); padding: 12px 20px 22px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; border-top: 1px solid var(--line); margin-top: auto; }
+  .btn { border-radius: 12px; padding: 14px 12px; font-weight: 700; font-size: 16px; cursor: pointer; border: 1.5px solid var(--ink); background: var(--paper); }
+  .btn.primary { background: var(--ink); color: var(--paper); }
+  .btn.full { grid-column: 1 / -1; }
+
+  .resolved { margin: 18px 20px 0; padding: 14px 16px; border-radius: 12px; background: var(--slate-wash); }
+  .resolved b { display: block; font-size: 17px; margin-bottom: 4px; }
+  .resolved p { margin: 0; color: var(--ink-2); font-size: 15px; }
+  .resolved.yes { background: #E5F2F0; }
+  .resolved.yes b { color: var(--teal); }
+  .resolved.flash { animation: settle .45s ease-out; }
+  @keyframes settle { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .note-box { margin: 14px 20px 0; }
+  .note-box label { font-size: 14px; color: var(--ink-3); font-weight: 600; display: block; margin-bottom: 6px; }
+  .note-box textarea { width: 100%; min-height: 72px; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; resize: vertical; }
+
+  .pulse { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--teal); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
+
+  /* Anatomy markers */
+  .mk { display: none; }
+  body.anatomy .mk {
+    display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+    background: #2F6FD6; color: #fff; font-size: 11px; font-weight: 700; margin-right: 6px; vertical-align: 2px; flex: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse, .resolved.flash { animation: none; }
+  }
+  @media (max-width: 1100px) {
+    .stage { grid-template-columns: 390px minmax(240px, 360px); }
+    .intro { grid-column: 1 / -1; max-width: 760px; }
+    .jump { flex-direction: row; flex-wrap: wrap; }
+  }
+  @media (max-width: 760px) {
+    .stage { grid-template-columns: 1fr; padding: 24px 12px 48px; justify-items: center; }
+    .phone { width: 100%; max-width: 390px; height: 760px; }
+    .notes { position: static; }
+  }
+</style>
+</head>
+<body>
+<main class="stage">
+  <section class="intro" aria-labelledby="intro-h">
+    <h1 id="intro-h">Supervising agents from your phone</h1>
+    <p>This is a working prototype of the mobile side of a meta-harness like Omnigent. You're away from your desk and five coding sessions are running. What needs you, and what happens if you don't answer?</p>
+    <p>Tap a session in the phone, or jump to a state:</p>
+    <nav class="jump" aria-label="Jump to a screen">
+      <button data-go="list"><span class="sig" style="background:var(--ink)"></span>All sessions</button>
+      <button data-go="approve"><span class="sig" style="background:var(--amber)"></span>Needs you: approve a push</button>
+      <button data-go="blocked"><span class="sig" style="background:var(--slate)"></span>Blocked by a policy</button>
+      <button data-go="lost"><span class="sig" style="background:var(--violet)"></span>Lost contact</button>
+      <button data-go="expired"><span class="sig" style="background:var(--done)"></span>A request nobody answered</button>
+    </nav>
+    <label class="toggle"><input type="checkbox" id="anatomy"> Show the request anatomy</label>
+    <p class="fine" style="margin-top:22px">An unofficial design study, not affiliated with Databricks. The sessions and names are made up. Polly is Omnigent's example orchestrator agent.</p>
+  </section>
+
+  <div class="phone" role="region" aria-label="Phone prototype">
+    <div class="statusbar" aria-hidden="true"><span>9:41</span><span>5G</span></div>
+
+    <!-- List -->
+    <section class="screen" id="s-list" aria-label="All sessions">
+      <div class="topbar"><h2>Your agents</h2></div>
+      <p class="sub">1 needs you. 4 more are running or done.</p>
+      <ul class="rows">
+        <li><button class="row" data-go="approve">
+          <span class="bar" style="background:var(--amber)"></span>
+          <span>
+            <span class="state" style="color:var(--amber);display:block">Needs you</span>
+            <span class="name" style="display:block">auth-retry</span>
+            <span class="agent" style="display:block">Polly, with Codex as a sub-agent</span>
+            <span class="what" style="display:block">Codex wants to push 3 commits to GitHub.</span>
+            <span class="when" style="display:block;color:var(--amber)">Answer by 9:41 PM tomorrow</span>
+          </span></button></li>
+        <li><button class="row" data-go="lost">
+          <span class="bar" style="background:var(--violet)"></span>
+          <span>
+            <span class="state" style="color:var(--violet);display:block">Lost contact</span>
+            <span class="name" style="display:block">flaky-tests</span>
+            <span class="agent" style="display:block">Claude Code on your laptop</span>
+            <span class="when" style="display:block;color:var(--violet)">Last heard 6 min ago</span>
+          </span></button></li>
+        <li><button class="row" data-go="blocked">
+          <span class="bar" style="background:var(--slate)"></span>
+          <span>
+            <span class="state" style="color:var(--slate);display:block">Blocked</span>
+            <span class="name" style="display:block">release-notes</span>
+            <span class="agent" style="display:block">Claude Code in a cloud sandbox</span>
+            <span class="what" style="display:block">Force pushes aren't allowed in this workspace.</span>
+          </span></button></li>
+        <li><button class="row" data-go="list" aria-disabled="true">
+          <span class="bar" style="background:var(--teal)"></span>
+          <span>
+            <span class="state" style="color:var(--teal);display:block"><span class="pulse" aria-hidden="true"></span> Working</span>
+            <span class="name" style="display:block">docs-migration</span>
+            <span class="agent" style="display:block">Cursor in a cloud sandbox</span>
+            <span class="what" style="display:block">Editing 4 files</span>
+            <span class="when" style="display:block;color:var(--ink-3)">Last heard 12s ago</span>
+          </span></button></li>
+        <li><button class="row" data-go="list" aria-disabled="true">
+          <span class="bar" style="background:var(--done)"></span>
+          <span>
+            <span class="state" style="color:var(--ink-3);display:block">Done</span>
+            <span class="name" style="display:block">lint-cleanup</span>
+            <span class="agent" style="display:block">Pi on your laptop</span>
+            <span class="what" style="display:block">Finished with 2 files changed. Ready for review.</span>
+          </span></button></li>
+      </ul>
+    </section>
+
+    <!-- Approve -->
+    <section class="screen" id="s-approve" aria-label="Approval request">
+      <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
+      <div class="band">
+        <div class="state" style="color:var(--amber)"><i style="background:var(--amber)"></i>Needs you</div>
+        <h3><span class="mk">2</span>Codex wants to push 3 commits to GitHub</h3>
+        <div class="who"><span class="mk">1</span>Sub-agent of Polly, in session auth-retry, on branch <code>feature/auth-retry</code></div>
+      </div>
+      <div id="approve-body">
+        <div class="deadline">
+          <p><span class="mk">7</span><b>If you don't answer by 9:41 PM tomorrow,</b> the push will be denied and Polly will stop this step.</p>
+          <div class="rail" role="img" aria-label="23 hours of 24 remaining"><span></span></div>
+          <div class="rail-labels"><span>Asked 1 hour ago</span><span>23 h left</span></div>
+        </div>
+        <div class="section">
+          <h4><span class="mk">4</span>Why it paused</h4>
+          <p>Pushes to GitHub need your approval. <span class="owner">Set by your workspace admin.</span></p>
+        </div>
+        <div class="section">
+          <h4><span class="mk">5</span>What changes</h4>
+          <p>The 3 commits become visible on GitHub. You can revert them afterward.</p>
+          <details style="margin-top:8px">
+            <summary><span class="mk">3</span>Show the exact command</summary>
+            <pre>git push origin feature/auth-retry
+  a41c9e2 Retry token refresh on 401
+  7be0d13 Add backoff to auth client
+  e02f5aa Tests for refresh retry</pre>
+          </details>
+        </div>
+        <div class="section">
+          <fieldset>
+            <legend><span class="mk">6</span>How far your approval reaches</legend>
+            <label class="scope"><input type="radio" name="scope" value="once" checked><span>Just this once</span></label>
+            <label class="scope"><input type="radio" name="scope" value="session"><span>For the rest of this session<small>Codex can push from auth-retry without asking.</small></span></label>
+            <label class="scope disabled"><input type="radio" name="scope" value="always" disabled><span>Always for Codex<small>Only your admin can change this rule.</small></span></label>
+          </fieldset>
+        </div>
+      </div>
+      <div id="approve-result" hidden></div>
+      <div class="actions" id="approve-actions">
+        <button class="btn" id="deny">Deny</button>
+        <button class="btn primary" id="approve">Approve once</button>
+      </div>
+    </section>
+
+    <!-- Blocked -->
+    <section class="screen" id="s-blocked" aria-label="Blocked by a policy">
+      <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
+      <div class="band">
+        <div class="state" style="color:var(--slate)"><i style="background:var(--slate)"></i>Blocked</div>
+        <h3>Force pushes aren't allowed in this workspace</h3>
+        <div class="who">Claude Code, in session release-notes, tried to force push <code>release/2.4</code>.</div>
+      </div>
+      <div class="section">
+        <h4>What you can do</h4>
+        <p>Ask the agent to push without force. If the branch history really needs rewriting, ask your workspace admin. <span class="owner">They own this rule.</span></p>
+      </div>
+      <div class="note-box">
+        <label for="blocked-note">Message to Claude Code</label>
+        <textarea id="blocked-note">Rebase onto origin/release/2.4 and push without force.</textarea>
+      </div>
+      <div class="section" style="margin-top:14px">
+        <details>
+          <summary>Details for admins</summary>
+          <pre>policy: github_access
+param:  deny_force_push = true
+level:  server-wide (admin)
+phase:  tool_call  verdict: DENY</pre>
+        </details>
+      </div>
+      <div class="actions"><button class="btn primary full" id="send-note">Send to Claude Code</button></div>
+    </section>
+
+    <!-- Lost contact -->
+    <section class="screen" id="s-lost" aria-label="Lost contact">
+      <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
+      <div class="band">
+        <div class="state" style="color:var(--violet)"><i style="background:var(--violet)"></i>Lost contact</div>
+        <h3>Can't reach your laptop</h3>
+        <div class="who">Session flaky-tests runs Claude Code on your laptop. We last heard from it 6 minutes ago.</div>
+      </div>
+      <div class="section">
+        <h4>Last thing we saw</h4>
+        <p>Running the test suite, 212 of 340 tests done.</p>
+      </div>
+      <div class="section">
+        <h4>What this means</h4>
+        <p>The agent may still be working, or your laptop may be asleep or offline. We'll stop showing it as working until it checks in again.</p>
+      </div>
+      <div class="actions">
+        <button class="btn" id="notify">Notify me</button>
+        <button class="btn primary" id="retry">Try again</button>
+      </div>
+    </section>
+
+    <!-- Expired -->
+    <section class="screen" id="s-expired" aria-label="Expired request">
+      <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
+      <div class="band">
+        <div class="state" style="color:var(--ink-3)"><i style="background:var(--done)"></i>Denied automatically</div>
+        <h3>Nobody answered, so the push was denied</h3>
+        <div class="who">Codex, sub-agent of Polly, in session auth-retry. Asked yesterday at 9:41 PM.</div>
+      </div>
+      <div class="section">
+        <h4>What happened next</h4>
+        <p>Polly stopped this step and is waiting for you. The 3 commits are still on the local branch, and nothing was pushed.</p>
+      </div>
+      <div class="actions"><button class="btn" data-go="list">Leave it</button><button class="btn primary" data-go="approve">Ask again</button></div>
+    </section>
+  </div>
+
+  <aside class="notes" aria-live="polite">
+    <h2 id="n-title"></h2>
+    <p id="n-lede"></p>
+    <ol id="n-list"></ol>
+    <p style="font-size:14px"><a href="https://github.com/jkelleman/omnigent/blob/design-study/design-study/docs/agent-states.md">Read the full pattern spec</a></p>
+  </aside>
+</main>
+
+<script>
+const NOTES = {
+  list: {
+    title: "Triage at a glance",
+    lede: "Sessions are sorted by what needs the person, not by recency. Each row answers: what state, which agent, and when it matters.",
+    items: [
+      ["One signal color per state", "The same color, label, and position on every surface."],
+      ["Needs you comes first", "The person's attention is the scarcest resource in a fleet."],
+      ["Working shows a last-heard time", "A spinner never claims activity the system can't verify."],
+      ["Harness in the metadata, not the headline", "Codex, Claude Code, and Cursor all read the same way."]
+    ]
+  },
+  approve: {
+    title: "Anatomy of a request",
+    lede: "Every approval carries seven parts. Parts 1, 2, 4, and 7 are always visible on a phone, and the rest are one tap away.",
+    items: [
+      ["Who", "The agent, its parent if it's a sub-agent, and where it's working."],
+      ["Wants to", "The action in plain words."],
+      ["Exact action", "The real command, collapsed by default."],
+      ["Why it paused, and who owns the rule", "Here it's the workspace admin, so “Always” is turned off and the reason is shown."],
+      ["What changes", "The effect, and whether it can be undone."],
+      ["Scope of your answer", "The same words on the button before the tap and on the label after."],
+      ["If you don't answer", "Saying nothing is a decision. The deadline and the default are shown up front."]
+    ]
+  },
+  blocked: {
+    title: "Policy messages in three layers",
+    lede: "The headline and next move are for the person deciding. The config is for the person who owns the rule.",
+    items: [
+      ["Headline", "The rule in plain words, with no mention of policy internals."],
+      ["Next move for this reader", "Something they can actually do, plus who to ask for the rest."],
+      ["Details for admins", "The policy name, parameter, level, and phase, collapsed."]
+    ]
+  },
+  lost: {
+    title: "Honest status",
+    lede: "When the runner goes quiet, the UI stops showing the session as working. This screen says what we know and what we don't.",
+    items: [
+      ["Name the gap", "We last heard from it 6 minutes ago."],
+      ["Last known activity", "So the person can judge whether to worry."],
+      ["Uncertain wording for uncertain states", "“May still be working” instead of a false claim either way."]
+    ]
+  },
+  expired: {
+    title: "When nobody answers",
+    lede: "A timeout counts as a deny. The card says what happened, what the agent did next, and how to pick the work back up.",
+    items: [
+      ["Outcome first", "“Nobody answered, so the push was denied.”"],
+      ["State of the work", "The commits are safe on the local branch."],
+      ["One way back", "Ask again reopens the same request."]
+    ]
+  }
+};
+
+const screens = [...document.querySelectorAll(".screen")];
+const jumpBtns = [...document.querySelectorAll(".jump button")];
+let current = "list";
+
+function go(id) {
+  if (!NOTES[id]) return;
+  current = id;
+  screens.forEach(s => s.classList.toggle("on", s.id === "s-" + id));
+  jumpBtns.forEach(b => b.setAttribute("aria-current", b.dataset.go === id ? "true" : "false"));
+  const n = NOTES[id];
+  document.getElementById("n-title").textContent = n.title;
+  document.getElementById("n-lede").textContent = n.lede;
+  document.getElementById("n-list").innerHTML = n.items.map(([b, s]) => `<li><div><b>${b}</b><span>${s}</span></div></li>`).join("");
+  if (id === "approve") resetApproval();
+  document.querySelector("#s-" + id).scrollTop = 0;
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-go]");
+  if (t && t.getAttribute("aria-disabled") !== "true") go(t.dataset.go);
+});
+
+document.getElementById("anatomy").addEventListener("change", e => {
+  document.body.classList.toggle("anatomy", e.target.checked);
+  if (e.target.checked && current !== "approve") go("approve");
+});
+
+/* Approval flow */
+const SCOPE = {
+  once:    { button: "Approve once", label: "Approved once", detail: "Codex is pushing now. It will ask again next time." },
+  session: { button: "Approve for this session", label: "Approved for this session", detail: "Codex is pushing now and can push from auth-retry without asking until the session ends." }
+};
+function resolve(html, cls) {
+  document.getElementById("approve-body").hidden = true;
+  const out = document.getElementById("approve-result");
+  out.hidden = false;
+  out.innerHTML = `<div class="resolved flash ${cls}">${html}</div>`;
+  const st = document.querySelector("#s-approve .band .state");
+  st.style.color = cls === "yes" ? "var(--teal)" : "var(--ink-3)";
+  st.innerHTML = cls === "yes"
+    ? `<span class="pulse" aria-hidden="true"></span>Working`
+    : `<i style="background:var(--done)"></i>Denied`;
+  document.getElementById("approve-actions").innerHTML =
+    `<button class="btn primary full" data-go="list">Back to agents</button>`;
+}
+
+let approveTemplate;
+function resetApproval() {
+  const sec = document.getElementById("s-approve");
+  if (!approveTemplate) { approveTemplate = sec.innerHTML; return; }
+  sec.innerHTML = approveTemplate;
+  wireApproval();
+}
+function wireApproval() {
+  const btn = document.getElementById("approve");
+  document.querySelectorAll('input[name="scope"]').forEach(r =>
+    r.addEventListener("change", () => { btn.textContent = SCOPE[r.value].button; }));
+  btn.addEventListener("click", () => {
+    const s = SCOPE[document.querySelector('input[name="scope"]:checked').value];
+    resolve(`<b>${s.label}</b><p>${s.detail}</p>`, "yes");
+  });
+  document.getElementById("deny").addEventListener("click", () => {
+    resolve(`<b>Denied</b><p>Polly will stop this step and wait for your next message. The commits stay on the local branch.</p>`, "");
+  });
+}
+
+/* Small confirmations on other screens */
+document.getElementById("send-note").addEventListener("click", e => {
+  e.target.textContent = "Sent. Claude Code will retry without force.";
+  e.target.disabled = true;
+});
+document.getElementById("retry").addEventListener("click", e => { e.target.textContent = "Still no response"; });
+document.getElementById("notify").addEventListener("click", e => { e.target.textContent = "We'll notify you"; e.target.disabled = true; });
+
+const params = new URLSearchParams(location.search);
+if (params.get("anatomy") === "1") { document.getElementById("anatomy").checked = true; document.body.classList.add("anatomy"); }
+approveTemplate = document.getElementById("s-approve").innerHTML;
+go(params.get("screen") || "list");
+</script>
+</body>
+</html>
