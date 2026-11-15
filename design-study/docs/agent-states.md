@@ -2,7 +2,7 @@
 
 This spec defines a shared vocabulary for what a live agent session is doing, what the person can do about it, and what the interface has to say in each case. It is harness-neutral by design: the same state looks and reads the same whether Claude Code, Codex, or a custom YAML agent is underneath.
 
-Each state is mapped to what Omnigent has today (from `SessionStateBadge.tsx`, `ApprovalCard.tsx`, and `docs/POLICIES.md` at commit `f1bb65b`), so the gaps are concrete.
+Each state is mapped to what Omnigent has today (from `SessionStateBadge.tsx`, `ApprovalCard.tsx`, and `docs/POLICIES.md` at commit `ce5f47b`), so the gaps are concrete.
 
 ## Principles
 

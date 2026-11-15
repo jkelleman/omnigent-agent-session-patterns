@@ -2,7 +2,7 @@
 
 **Scope:** the moments when a person has to understand, or act on, an agent they aren't watching. That covers approval prompts, session status, policy blocks, timeouts, and errors.
 
-**Method:** Part 1 is a source read of [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) at commit `f1bb65b` (Nov 13, 2026). Part 2 is hands-on use on desktop and phone.
+**Method:** Part 1 is a source read of [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) at commit `ce5f47b` (Nov 15, 2026). Part 2 is hands-on use on desktop and phone.
 
 **Note:** Omnigent is alpha, and a lot is already done well. I've called those out too, because good patterns should be kept on purpose, not by accident.
 
@@ -42,7 +42,7 @@ The resolved approval card can show at least 10 different verdict labels, includ
 - "Approved · auto-accepting edits"
 - "Approved · directory access for this session"
 
-`ApprovalCard.tsx`, around lines 789–851
+`ApprovalCard.tsx`, around lines 793–855
 
 Each label is accurate. Together, they leave the question that matters for trust unanswered: **how far does my yes reach?** For example:
 
