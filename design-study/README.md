@@ -12,14 +12,20 @@ When you run four or five coding agents at once, most of your time isn't spent w
 
 Those moments decide whether people trust a fleet of agents or babysit it. This repo is my take on designing them.
 
-![The prototype: a sub-agent's push request, with the deadline, the rule's owner, and the scope of the approval visible on one phone screen](docs/images/prototype-approve.png)
+<table>
+<tr><th>Omnigent today</th><th>Proposed</th></tr>
+<tr>
+<td width="55%" valign="top"><img src="docs/images/omnigent/approval-policy.png" alt="Omnigent's approval card today: header shows the internal policy id and phase, the message refers to 'the agent', and there's no deadline"><br><br>The header shows the policy's internal ID and phase. The message says "the agent," and nothing says what happens if you don't answer.</td>
+<td width="45%"><img src="docs/images/proposed/approve.png" alt="Proposed phone approval: names the agent and its parent, shows the deadline and default, and says who owns the rule"></td>
+</tr>
+</table>
 
 ## What's here
 
 | | |
 |---|---|
-| **[Audit](docs/audit.md)** | A close read of how Omnigent handles approvals, status, policy blocks, and errors today. It covers what works well and five specific gaps, with file references. |
-| **[Pattern spec](docs/agent-states.md)** | It includes: <ul><li>eight harness-neutral session states</li><li>a seven-part anatomy for any approval request</li><li>a scope ladder for "how far does my yes reach"</li><li>a three-layer structure for policy messages</li></ul> |
+| **[Audit](docs/audit.md)** | A close read of how Omnigent handles approvals, status, policy blocks, and errors today. It covers what works well and five specific gaps, with screenshots of Omnigent's current interface and file references, each paired with the proposed fix. |
+| **[Pattern spec](docs/agent-states.md)** | It includes: <ul><li>eight harness-neutral session states</li><li>a seven-part anatomy for any approval request</li><li>a scope ladder for "how far does my yes reach"</li><li>a three-layer structure for policy messages</li><li>a state icon set and a state diagram</li></ul> |
 | **[Prototype](prototype/)** | A working mobile prototype covering triaging sessions, approving a sub-agent's `git push`, a policy block, and lost contact. It's a single HTML file. [View it live](https://jkelleman.github.io/omnigent/design-study/prototype/) or open it locally. |
 | **[Evals](evals/)** | A rubric plus an LLM-as-judge harness that scores agent status and approval messages for whether a person can act on them. It runs against Omnigent's real strings and my rewrites, with a rule-based baseline for comparison. |
 

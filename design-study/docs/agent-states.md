@@ -16,16 +16,24 @@ Each state is mapped to what Omnigent has today (from `SessionStateBadge.tsx`, `
 
 ## States
 
+<img src="images/state-icons.svg" alt="Eight session state icons in color and monochrome">
+
+Each state has its own shape, so it reads without color: in monochrome, in a notification, and for color-blind users. The SVGs are in [`images/icons/`](images/icons/).
+
 | State | What it means | What the person can do | Omnigent today | Gap |
 |---|---|---|---|---|
-| **Starting** | The session is booting: runner, sandbox, harness | Wait or cancel | `starting` ("Session starting up") | Same spinner as running; no progress or ETA for slow sandbox boots |
-| **Working** | The agent is acting, and we heard from it recently | Watch, steer, stop | `running` ("Session running" / "Working in the background") | No "last heard" time; can stay stuck on "working" when the runner is offline |
-| **Needs you** | The agent is paused on the person: an approval, a question, a plan review | Answer, or open details | `awaiting` ("Needs response" / "May need input") | Deadline and default aren't shown while the request is pending |
-| **Blocked** | A policy denied an action and the agent can't continue that path | Adjust the task, or ask the rule's owner | Surfaces as an agent error in the transcript | Not a distinct state; the reason doesn't name the rule's owner |
-| **Lost contact** | No signal from the runner or host past a threshold | Reconnect, move to the cloud, or wait | `disconnected` ("Host disconnected") | Only covers the host; a runner going quiet isn't shown |
-| **Failed** | The agent stopped on an error it couldn't recover from | Retry, fork from before the error, or read the log | `error` ("Latest message is an error") | Describes the message, not whether the agent stopped |
-| **Recovered** | The agent hit an error and got past it on its own | Nothing required; can review | None | Recovery isn't shown, so the error badge can outlive the problem |
-| **Done** | The turn finished | Review the changes, reply | `idle` / `unseen` ("New messages") | — |
+| <img src="images/icons/starting.svg" width="20" alt=""> **Starting** | The session is booting: runner, sandbox, harness | Wait or cancel | `starting` ("Session starting up") | Same spinner as running; no progress or ETA for slow sandbox boots |
+| <img src="images/icons/working.svg" width="20" alt=""> **Working** | The agent is acting, and we heard from it recently | Watch, steer, stop | `running` ("Session running" / "Working in the background") | No "last heard" time; can stay stuck on "working" when the runner is offline |
+| <img src="images/icons/needs-you.svg" width="20" alt=""> **Needs you** | The agent is paused on the person: an approval, a question, a plan review | Answer, or open details | `awaiting` ("Needs response" / "May need input") | Deadline and default aren't shown while the request is pending |
+| <img src="images/icons/blocked.svg" width="20" alt=""> **Blocked** | A policy denied an action and the agent can't continue that path | Adjust the task, or ask the rule's owner | Surfaces as an agent error in the transcript | Not a distinct state; the reason doesn't name the rule's owner |
+| <img src="images/icons/lost-contact.svg" width="20" alt=""> **Lost contact** | No signal from the runner or host past a threshold | Reconnect, move to the cloud, or wait | `disconnected` ("Host disconnected") | Only covers the host; a runner going quiet isn't shown |
+| <img src="images/icons/failed.svg" width="20" alt=""> **Failed** | The agent stopped on an error it couldn't recover from | Retry, fork from before the error, or read the log | `error` ("Latest message is an error") | Describes the message, not whether the agent stopped |
+| <img src="images/icons/recovered.svg" width="20" alt=""> **Recovered** | The agent hit an error and got past it on its own | Nothing required; can review | None | Recovery isn't shown, so the error badge can outlive the problem |
+| <img src="images/icons/done.svg" width="20" alt=""> **Done** | The turn finished | Review the changes, reply | `idle` / `unseen` ("New messages") | — |
+
+### How sessions move between states
+
+<img src="images/state-flow.svg" alt="State diagram: Starting to Working; Working to Needs you, Blocked, Done, Lost contact, Failed, and Recovered, with the ways back">
 
 ### Severity order (for one badge per session)
 
@@ -46,6 +54,8 @@ Every approval, on every surface, carries these seven parts:
 | 5 | **What changes** | "3 commits become visible on origin. Can be reverted." |
 | 6 | **Scope of your answer** | Just this once · This session · Always for this agent |
 | 7 | **If you don't answer** | "Denied automatically at 9:41 PM tomorrow. The agent will stop this step." |
+
+<img src="images/proposed/approve-anatomy.png" alt="The seven parts, numbered on the proposed phone approval screen" width="360">
 
 On a phone, parts 1, 2, 4, and 7 are always visible, and the rest sit one tap away. Approve and deny stay within thumb reach, and deny is never the visually dominant button.
 
