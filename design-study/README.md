@@ -4,7 +4,7 @@
 
 This is an independent design study of [Omnigent](https://github.com/omnigent-ai/omnigent), the open-source meta-harness from Databricks. Databricks has not reviewed or endorsed it.
 
-A person running several coding agents spends most of their attention on the handoffs: human-in-the-loop approvals, policy blocks, errors, and lost connections. Each handoff is a message the person has to understand quickly, often on a phone. This study covers how Omnigent handles those messages today, and proposes a harness-neutral interaction model and message architecture for them.
+A person running several coding agents spends most of their attention on the handoffs: human-in-the-loop approvals, policy blocks, errors, and lost connections. Each handoff is a message the person has to understand quickly, often on a phone. This study audits how Omnigent handles those messages today and proposes a harness-neutral interaction model and message architecture for them.
 
 <table>
 <tr><th>Omnigent today</th><th>Proposed</th></tr>
@@ -14,32 +14,39 @@ A person running several coding agents spends most of their attention on the han
 </tr>
 </table>
 
+## Findings at a glance
+
+The [audit](docs/audit.md) covers five areas of Omnigent's interface (commit `ce5f47b`), using its source code and its own visual-test screenshots.
+
+| Area audited | What I found | Proposed fix | How to implement it | Why it matters |
+|---|---|---|---|---|
+| **Harness voice** in approval and question cards | The same event gets a different title and wording per harness: "Command approval," "Approval required," "Codex needs input," "Claude has questions." Some cards say only "the agent." | One title per event across harnesses: "[Agent name] needs your answer." The harness name moves to the metadata line. | Map each harness's event to one shared string in `ApprovalCard.tsx`. Always pass the agent's display name, and its parent for sub-agents. | Omnigent's value is one layer over many harnesses. Inconsistent copy exposes the harness and slows triage across sessions. |
+| **Approval scope** | The "remember" button changes wording per card, and resolved cards show at least 10 different verdict labels. "Remember," "don't ask again," and "always allowed" don't clearly map to a scope. | A three-step [scope ladder](docs/agent-states.md#scope-ladder): Just this once, This session, Always for this agent. Same words on the button and the resolved label. | Collapse the verdict labels into three scope values. Add a "confirming…" suffix while a harness confirms delivery. Disable scopes the reader doesn't own, and name the owner. | Approval scope is a trust decision. People need to know how far a yes reaches before they give it. |
+| **Approval timeout** | Unanswered approvals resolve as a deny after 24 hours (default `ask_timeout` of 86,400 seconds). The pending card shows no deadline. The expired card gives a next step but not the outcome. | Show the deadline and default on every pending request. Expired cards lead with the outcome, then the state of the work, then one way back. | Read the effective `ask_timeout` when the elicitation is created and render it on the card. Add an "expired" resolution template. | In async supervision, no answer is the most common answer. The person needs to know what it does before it happens. |
+| **Policy messages** | Cards show the internal policy ID and phase (`approve_shell_commands (tool_call)`). Reasons like "Blocked by policy" name no owner. One tells the reader to set `deny_force_push=False`, which most readers can't change. | A [three-layer policy message](docs/agent-states.md#policy-messages-in-three-layers): a plain-language headline, a next move for this reader, and collapsed details for admins. | Add a user-facing `summary` and an `owner` level (session, agent spec, server) to each policy's reason. Move IDs, phases, and parameters into a details section. | Omnigent's own trust model has three policy owners. The reader can only act if they know which one set the rule. |
+| **Session status** | Status labels describe the transcript ("Latest message is an error"). Running and Starting share a spinner. The client can stay on "working" when a runner is offline. | Eight harness-neutral [session states](docs/agent-states.md#states), each with a distinct icon. "Working" carries a last-heard time and changes to *Lost contact* past a threshold. | Derive state from runner heartbeats, and compute one badge per session by severity order. Ship the icon set in `docs/images/icons/`. | A spinner that runs while nothing happens makes every other status label harder to trust. |
+
+The audit also lists what Omnigent already does well, such as hedging inferred states ("May need input") and putting the next move into its offline messages.
+
+## Measuring message quality
+
+Agent interface copy is templated and repeated across many harnesses, so manual review doesn't scale. The [evals](evals/) score each message on five checks (Actor, Action, Cause, Consequence, Next move), counting only the checks that apply on its surface.
+
+| Set | Keyword checker (v2) | Passing |
+|---|---|---|
+| Omnigent's current messages | 2.0 / 10 | 0 of 11 |
+| Proposed rewrites | 8.6 / 10 | 10 of 11 |
+
+The keyword checker is a reproducible baseline. An LLM judge calibrated against human scores makes the final call. [SCORING.md](evals/SCORING.md) explains the scores, and [KEYWORD-CHECKER.md](evals/KEYWORD-CHECKER.md) covers the checker's gaps, the fixes, and the scoring workflow.
+
 ## Contents
 
 | | |
 |---|---|
-| **[Audit](docs/audit.md)** | Approvals, session status, policy blocks, and errors in Omnigent today. Five findings, each with screenshots, source references, and a proposed fix, plus the patterns worth keeping. |
-| **[Pattern spec](docs/agent-states.md)** | <ul><li>Eight harness-neutral session states, with icons and a state diagram</li><li>A seven-part anatomy for approval requests</li><li>A scope ladder for approvals</li><li>A three-layer structure for policy messages</li></ul> |
-| **[Prototype](prototype/)** | A mobile prototype for cross-session triage, approving a sub-agent's `git push`, a policy block, lost contact, and an expired request. [View it live](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/). |
-| **[Evals](evals/)** | A rubric and an LLM-as-judge harness that score agent messages on whether a person can act on them. It covers 11 real Omnigent strings and 11 rewrites, with a rule-based baseline. |
-
-## Principles
-
-1. **Name the actor and the rule owner.** Every pause says which agent is asking and who set the policy: the user, the agent's author, or the workspace admin.
-2. **Show the scope of an approval before the tap.** One scope ladder (once, this session, always for this agent) on every surface, worded the same before and after.
-3. **State the timeout and its default.** An unanswered approval resolves as a deny after 24 hours, so every pending request shows that deadline.
-4. **Only report activity the system can confirm.** "Working" carries a last-heard time and changes to *Lost contact* past a threshold.
-5. **Keep the voice consistent across harnesses.** The same event uses the same words whether Claude Code, Codex, or Cursor is underneath.
-
-## Why evals
-
-Agent interface copy is templated, generated, and repeated across many harnesses, so manual review doesn't scale. The [rubric](evals/rubric.md) breaks "can a person act on this message?" into five checks that a human reviewer or an LLM judge can score consistently:
-
-- **Actor:** which agent is acting
-- **Action:** what it did or wants to do
-- **Cause:** why it paused, and who owns the rule
-- **Consequence:** what each answer does, including no answer
-- **Next move:** what this reader can do now
+| **[Audit](docs/audit.md)** | The five findings in full, with screenshots, source references, and today-versus-proposed comparisons |
+| **[Pattern spec](docs/agent-states.md)** | Session states, icons, a state diagram, the seven-part approval anatomy, the scope ladder, and policy message layers |
+| **[Prototype](prototype/)** | A mobile prototype for cross-session triage, approvals, policy blocks, lost contact, and expired requests. [View it live](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/). |
+| **[Evals](evals/)** | The rubric, 11 real Omnigent strings with 11 rewrites, the keyword checker, and the LLM judge |
 
 ## How this was made
 
