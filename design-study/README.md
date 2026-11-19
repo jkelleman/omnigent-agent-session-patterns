@@ -26,7 +26,7 @@ Those moments decide whether people trust a fleet of agents or babysit it. This 
 |---|---|
 | **[Audit](docs/audit.md)** | A close read of how Omnigent handles approvals, status, policy blocks, and errors today. It covers what works well and five specific gaps, with screenshots of Omnigent's current interface and file references, each paired with the proposed fix. |
 | **[Pattern spec](docs/agent-states.md)** | It includes: <ul><li>eight harness-neutral session states</li><li>a seven-part anatomy for any approval request</li><li>a scope ladder for "how far does my yes reach"</li><li>a three-layer structure for policy messages</li><li>a state icon set and a state diagram</li></ul> |
-| **[Prototype](prototype/)** | A working mobile prototype covering triaging sessions, approving a sub-agent's `git push`, a policy block, and lost contact. It's a single HTML file. [View it live](https://jkelleman.github.io/omnigent/design-study/prototype/) or open it locally. |
+| **[Prototype](prototype/)** | A working mobile prototype covering triaging sessions, approving a sub-agent's `git push`, a policy block, and lost contact. It's a single HTML file. [View it live](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/) or open it locally. |
 | **[Evals](evals/)** | A rubric plus an LLM-as-judge harness that scores agent status and approval messages for whether a person can act on them. It runs against Omnigent's real strings and my rewrites, with a rule-based baseline for comparison. |
 
 ## The short version
