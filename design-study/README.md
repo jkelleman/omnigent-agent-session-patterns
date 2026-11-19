@@ -26,9 +26,9 @@ The [audit](docs/audit.md) reads Omnigent's source (commit `c3b5dee`) and its ow
 |---|---|---|---|---|
 | **Harness voice** | The same event has 4+ titles across harnesses; some cards say only "the agent" | One title per event: "[Agent] needs your answer" | One shared string set in `ApprovalCard.tsx`; always pass the agent and parent name | Inconsistent copy exposes the harness and slows triage |
 | **Approval scope** | 10+ verdict labels; "remember" and "always" don't map to a clear scope | [Scope ladder](docs/agent-states.md#scope-ladder): once, this session, always for this agent | Collapse verdicts into 3 scope values; disable scopes the reader doesn't own | People need to know how far a yes reaches before they give it |
-| **Approval timeout** | Unanswered approvals become a deny after 24 hours; the pending card doesn't say so | Show the deadline and default on every pending request; expired cards lead with the outcome | Read the effective `ask_timeout` when the request is created and render it | In async work, no answer is the most common answer |
+| **Approval timeout** | Unanswered approvals become a deny after 24 hours; the pending card doesn't say so | Show the deadline and default on every pending request; expired cards lead with the outcome | Read the effective `ask_timeout` when the request is created and render it | Async approvals often sit unanswered for hours, so the default outcome has to be visible up front |
 | **Policy messages** | 0 of 58 built-in reasons name the rule's owner; 8 say only "blocked by policy"; 4 show config syntax | [Three layers](docs/agent-states.md#policy-messages-in-three-layers): plain headline, next move, admin details | Add a person-facing summary and an owner level to each reason, separate from the agent-facing text | The reader can only act if they know who set the rule |
-| **Session status** | Labels describe the transcript; Running and Starting look the same; "working" can outlast a dead runner | [Eight session states](docs/agent-states.md#states) with distinct icons and a last-heard time | Derive state from runner heartbeats; one badge per session by severity | A spinner that runs while nothing happens undermines every status |
+| **Session status** | Labels describe the transcript; Running and Starting look the same; "working" can outlast a dead runner | [Eight session states](docs/agent-states.md#states) with distinct icons and a last-heard time | Derive state from runner heartbeats; one badge per session by severity | When the spinner keeps running on a dead session, people stop trusting the status labels |
 
 The audit also lists patterns worth keeping, such as hedging inferred states ("May need input").
 
@@ -52,7 +52,7 @@ The policy counts come from a [reproducible script](evals/policy_audit.py) over 
 
 - **Engineering throughput.** Databricks runs coding agents across a 5,000+ person engineering team. Every unanswered or misread approval is blocked work, and in cloud sandboxes, idle compute.
 - **Governance that admins can use.** Managed Omnigent sells policies and guardrails. When a block names its owner and a next move, it routes to the right person, with fewer support requests and fewer workarounds.
-- **The neutral-layer strategy.** Omnigent wraps 16+ harnesses. Consistent session language is how that neutrality shows up for the person using it.
+- **The neutral-layer strategy.** Omnigent wraps 16+ harnesses. Consistent session language keeps the experience the same whichever harness a team picks.
 - **Phone-first supervision.** Omnigent's pitch includes rejoining a session from a phone. These patterns make an approval decidable in the few seconds a phone check allows.
 
 ### How to measure it in production
@@ -64,7 +64,9 @@ The [metrics plan](docs/metrics-plan.md) adds attributes to events Omnigent alre
 | Mobile | Desktop |
 |---|---|
 | [<img src="docs/images/proposed/list.png" alt="Mobile session list sorted by what needs you" width="260">](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/) | [<img src="docs/images/proposed/desktop-approve.png" alt="Desktop orchestration view with a severity-sorted session list and an inline approval card">](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/desktop.html) |
-| Cross-session triage, approvals, policy blocks, lost contact, and expired requests | Dense orchestration in Omnigent's own design tokens, including watch, co-drive, and fork |
+| Cross-session triage, approvals, policy blocks, lost contact, and expired requests | Dense orchestration, including watch, co-drive, and fork |
+
+Both prototypes use Omnigent's light-theme tokens and component conventions from its source: the color palette, status colors, type scale, 8px radii, and the Approve and Reject button pattern. The state icons are new.
 
 ## Contents
 

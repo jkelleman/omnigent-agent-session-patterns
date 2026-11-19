@@ -53,4 +53,4 @@ The [evals](../evals/) score new approval and policy strings before they ship. T
 - The keyword checker flags configuration syntax in a person-facing message and policy messages that name no owner.
 - The LLM judge scores new strings against the rubric once it's calibrated against human scores.
 
-Message quality scores predict comprehension. The metrics above confirm it in production.
+Message quality scores are an early signal before release. The production metrics show whether comprehension actually improved.

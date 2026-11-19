@@ -46,7 +46,7 @@ python evals/judge.py --human evals/human_scores.csv
 
 The [lint baseline](results/lint-baseline.md) shows the limits of string rules:
 
-- **It has no surface context.** It scores the push approval rewrite 0 on Next move, though the Approve and Deny buttons sit right below the message.
+- **It has no surface context.** It scores the push approval rewrite 0 on Next move, though the Approve and Reject buttons sit right below the message.
 - **It doesn't model the reader.** It can't tell whether "ask your admin" is an option this reader has.
 - **It matches keywords.** It can't judge whether a message states a consequence.
 

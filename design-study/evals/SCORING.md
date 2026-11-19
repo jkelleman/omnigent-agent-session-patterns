@@ -39,7 +39,7 @@ Most of the lost points are scorer limits. A few are real gaps in the rewrites o
 | Message | Lint score | Where points were lost | Type |
 |---|---|---|---|
 | `r-force` | 9, pass | Consequence 1 | Minor real gap: doesn't say what the agent does next |
-| `r-risk` | 8 | Next move 0 | Scorer limit: Approve and Deny buttons are on the card |
+| `r-risk` | 8 | Next move 0 | Scorer limit: Approve and Reject buttons are on the card |
 | `r-push-ask` | 8 | Next move 0 | Scorer limit: buttons are on the card |
 | `r-error-badge` | 8, pass | Cause 1, Consequence 1 | Minor real gap: no cause for the error |
 | `r-expired` | 8, pass | Actor 1, Cause 1 | Minor real gap: names Polly but not the session |

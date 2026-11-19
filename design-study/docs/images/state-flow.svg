@@ -1,56 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="Atkinson Hyperlegible Next, -apple-system, Segoe UI, sans-serif">
-<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#4E5B68"/></marker></defs>
-<rect width="100%" height="100%" rx="16" fill="#FAFBFC"/>
-<text x="32" y="40" font-size="20" font-weight="700" fill="#1C2733">How a session moves between states</text>
-<path d="M200.0 280 L310.0 280" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="255" y="272" font-size="13" fill="#4E5B68" text-anchor="middle">ready</text>
-<path d="M370 252.0 L370 118.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="362" y="190" font-size="13" fill="#4E5B68" text-anchor="end">asks you</text>
-<path d="M430 118.0 L430 252.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="438" y="190" font-size="13" fill="#4E5B68" text-anchor="start">you answer</text>
-<path d="M490.0 270 L630.0 270" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="560" y="260" font-size="13" fill="#4E5B68" text-anchor="middle">turn ends</text>
-<path d="M630.0 292 L490.0 292" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="560" y="312" font-size="13" fill="#4E5B68" text-anchor="middle">you reply</text>
-<path d="M490.0 90 L690 252" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="600" y="150" font-size="13" fill="#4E5B68" text-anchor="start">you deny, or time runs out</text>
-<path d="M310.0 266 L180 118.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="192" y="200" font-size="13" fill="#4E5B68" text-anchor="end">a rule denies</text>
-<path d="M370 308.0 L370 442.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="362" y="380" font-size="13" fill="#4E5B68" text-anchor="end">silent too long</text>
-<path d="M430 442.0 L430 308.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="438" y="380" font-size="13" fill="#4E5B68" text-anchor="start">checks in</text>
-<path d="M490.0 304 L680 442.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="590" y="400" font-size="13" fill="#4E5B68" text-anchor="end">can't recover</text>
-<path d="M760 442.0 L760 308.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="772" y="380" font-size="13" fill="#4E5B68" text-anchor="start">you retry or fork</text>
-<path d="M310.0 304 L150 442.0" stroke="#4E5B68" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
-<text x="186" y="402" font-size="13" fill="#4E5B68" text-anchor="end">error, retried</text>
-<text x="20" y="144" font-size="12" fill="#7A8691">Resumes when you redirect it</text>
-<text x="110" y="524" font-size="12" fill="#7A8691" text-anchor="middle">Shown briefly, then back to Working</text>
-<rect x="20.0" y="252.0" width="180" height="56" rx="12" fill="#fff" stroke="#D5DBE1" stroke-width="1.2"/>
-<g transform="translate(36.0,268)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#7A8691" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3.2 3"/></g>
-<text x="72.0" y="285" font-size="16" font-weight="700" fill="#1C2733">Starting</text>
-<rect x="310.0" y="252.0" width="180" height="56" rx="12" fill="#fff" stroke="#1F7A72" stroke-width="2"/>
-<g transform="translate(326.0,268)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#1F7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#1F7A72"/></g>
-<text x="362.0" y="285" font-size="16" font-weight="700" fill="#1C2733">Working</text>
-<rect x="310.0" y="62.0" width="180" height="56" rx="12" fill="#fff" stroke="#A35F00" stroke-width="2"/>
-<g transform="translate(326.0,78)"><circle cx="12" cy="12" r="10" fill="#A35F00"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></g>
-<text x="362.0" y="95" font-size="16" font-weight="700" fill="#1C2733">Needs you</text>
-<rect x="20.0" y="62.0" width="180" height="56" rx="12" fill="#fff" stroke="#D5DBE1" stroke-width="1.2"/>
-<g transform="translate(36.0,78)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#46525E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18 6" fill="none" stroke="#46525E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
-<text x="72.0" y="95" font-size="16" font-weight="700" fill="#1C2733">Blocked</text>
-<rect x="630.0" y="252.0" width="180" height="56" rx="12" fill="#fff" stroke="#D5DBE1" stroke-width="1.2"/>
-<g transform="translate(646.0,268)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
-<text x="682.0" y="285" font-size="16" font-weight="700" fill="#1C2733">Done</text>
-<rect x="310.0" y="442.0" width="180" height="56" rx="12" fill="#fff" stroke="#D5DBE1" stroke-width="1.2"/>
-<g transform="translate(326.0,458)"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="#5B4FA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="#5B4FA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.6" fill="#5B4FA0"/></g>
-<text x="362.0" y="475" font-size="16" font-weight="700" fill="#1C2733">Lost contact</text>
-<rect x="630.0" y="442.0" width="180" height="56" rx="12" fill="#fff" stroke="#D5DBE1" stroke-width="1.2"/>
-<g transform="translate(646.0,458)"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z" fill="#B8322A"/><path d="M9 9l6 6M15 9l-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>
-<text x="682.0" y="475" font-size="16" font-weight="700" fill="#1C2733">Failed</text>
-<rect x="20.0" y="442.0" width="180" height="56" rx="12" fill="#fff" stroke="#D5DBE1" stroke-width="1.2"/>
-<g transform="translate(36.0,458)"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" fill="none" stroke="#1F7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 3.5v3.7h-3.7" fill="none" stroke="#1F7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4" fill="none" stroke="#1F7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
-<text x="72.0" y="475" font-size="16" font-weight="700" fill="#1C2733">Recovered</text>
-<text x="968" y="540" font-size="12" fill="#7A8691" text-anchor="end">Needs you outranks every other state when one badge must summarize a session.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#71717a"/></marker></defs>
+<rect width="100%" height="100%" rx="16" fill="#ffffff" stroke="#e4e4e7"/>
+<text x="32" y="40" font-size="20" font-weight="700" fill="#27272a">How a session moves between states</text>
+<path d="M200.0 280 L310.0 280" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="255" y="272" font-size="13" fill="#71717a" text-anchor="middle">ready</text>
+<path d="M370 252.0 L370 118.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="362" y="190" font-size="13" fill="#71717a" text-anchor="end">asks you</text>
+<path d="M430 118.0 L430 252.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="438" y="190" font-size="13" fill="#71717a" text-anchor="start">you answer</text>
+<path d="M490.0 270 L630.0 270" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="560" y="260" font-size="13" fill="#71717a" text-anchor="middle">turn ends</text>
+<path d="M630.0 292 L490.0 292" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="560" y="312" font-size="13" fill="#71717a" text-anchor="middle">you reply</text>
+<path d="M490.0 90 L690 252" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="600" y="150" font-size="13" fill="#71717a" text-anchor="start">you deny, or time runs out</text>
+<path d="M310.0 266 L180 118.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="192" y="200" font-size="13" fill="#71717a" text-anchor="end">a rule denies</text>
+<path d="M370 308.0 L370 442.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="362" y="380" font-size="13" fill="#71717a" text-anchor="end">silent too long</text>
+<path d="M430 442.0 L430 308.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="438" y="380" font-size="13" fill="#71717a" text-anchor="start">checks in</text>
+<path d="M490.0 304 L680 442.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="590" y="400" font-size="13" fill="#71717a" text-anchor="end">can't recover</text>
+<path d="M760 442.0 L760 308.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="772" y="380" font-size="13" fill="#71717a" text-anchor="start">you retry or fork</text>
+<path d="M310.0 304 L150 442.0" stroke="#71717a" stroke-width="1.6" fill="none" marker-end="url(#a)"/>
+<text x="186" y="402" font-size="13" fill="#71717a" text-anchor="end">error, retried</text>
+<text x="20" y="144" font-size="12" fill="#a1a1aa">Resumes when you redirect it</text>
+<text x="110" y="524" font-size="12" fill="#a1a1aa" text-anchor="middle">Shown briefly, then back to Working</text>
+<rect x="20.0" y="252.0" width="180" height="56" rx="12" fill="#fff" stroke="#e4e4e7" stroke-width="1.2"/>
+<g transform="translate(36.0,268)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3.2 3"/></g>
+<text x="72.0" y="285" font-size="16" font-weight="700" fill="#27272a">Starting</text>
+<rect x="310.0" y="252.0" width="180" height="56" rx="12" fill="#fff" stroke="#2f7fd4" stroke-width="2"/>
+<g transform="translate(326.0,268)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#2f7fd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#2f7fd4"/></g>
+<text x="362.0" y="285" font-size="16" font-weight="700" fill="#27272a">Working</text>
+<rect x="310.0" y="62.0" width="180" height="56" rx="12" fill="#fff" stroke="#df3c85" stroke-width="2"/>
+<g transform="translate(326.0,78)"><circle cx="12" cy="12" r="10" fill="#df3c85"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></g>
+<text x="362.0" y="95" font-size="16" font-weight="700" fill="#27272a">Needs you</text>
+<rect x="20.0" y="62.0" width="180" height="56" rx="12" fill="#fff" stroke="#e4e4e7" stroke-width="1.2"/>
+<g transform="translate(36.0,78)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18 6" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="72.0" y="95" font-size="16" font-weight="700" fill="#27272a">Blocked</text>
+<rect x="630.0" y="252.0" width="180" height="56" rx="12" fill="#fff" stroke="#e4e4e7" stroke-width="1.2"/>
+<g transform="translate(646.0,268)"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="682.0" y="285" font-size="16" font-weight="700" fill="#27272a">Done</text>
+<rect x="310.0" y="442.0" width="180" height="56" rx="12" fill="#fff" stroke="#e4e4e7" stroke-width="1.2"/>
+<g transform="translate(326.0,458)"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.6" fill="#8e99a4"/></g>
+<text x="362.0" y="475" font-size="16" font-weight="700" fill="#27272a">Lost contact</text>
+<rect x="630.0" y="442.0" width="180" height="56" rx="12" fill="#fff" stroke="#e4e4e7" stroke-width="1.2"/>
+<g transform="translate(646.0,458)"><path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z" fill="#f04858"/><path d="M9 9l6 6M15 9l-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>
+<text x="682.0" y="475" font-size="16" font-weight="700" fill="#27272a">Failed</text>
+<rect x="20.0" y="442.0" width="180" height="56" rx="12" fill="#fff" stroke="#e4e4e7" stroke-width="1.2"/>
+<g transform="translate(36.0,458)"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" fill="none" stroke="#2ea65c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 3.5v3.7h-3.7" fill="none" stroke="#2ea65c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4" fill="none" stroke="#2ea65c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="72.0" y="475" font-size="16" font-weight="700" fill="#27272a">Recovered</text>
+<text x="968" y="540" font-size="12" fill="#a1a1aa" text-anchor="end">Needs you outranks every other state when one badge must summarize a session.</text>
 </svg>

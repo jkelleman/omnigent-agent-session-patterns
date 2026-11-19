@@ -6,7 +6,7 @@
 <title>Score agent messages</title>
 <link rel="icon" href="../prototype/favicon.svg" type="image/svg+xml">
 <style>
-  :root { --ink:#1C2733; --ink-2:#4E5B68; --ink-3:#7A8691; --line:#D5DBE1; --paper:#FAFBFC; --fog:#E6EAEE; --amber:#A35F00; --teal:#1F7A72; }
+  :root { --ink:#27272a; --ink-2:#71717a; --ink-3:#a1a1aa; --line:#e4e4e7; --paper:#ffffff; --fog:#f9f9f9; --amber:#df3c85; --teal:#2f7fd4; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--fog); color:var(--ink); font: 15px/1.5 system-ui, sans-serif; }
   main { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
@@ -24,13 +24,13 @@
   .check { display:grid; grid-template-columns: 130px 1fr; gap:10px; align-items:center; padding:6px 0; border-top:1px solid #edf0f3; }
   .check .q { font-size:13px; color:var(--ink-3); }
   .opts { display:flex; gap:6px; flex-wrap:wrap; }
-  .opts button { font: inherit; font-size:14px; border:1px solid var(--line); background:#fff; border-radius:8px; padding:4px 12px; cursor:pointer; }
-  .opts button[aria-pressed="true"] { background: var(--ink); color:#fff; border-color: var(--ink); }
+  .opts button { font: inherit; font-size:14px; border:1px solid var(--line); background:#fff; border-radius:8px; height:32px; padding:0 12px; cursor:pointer; }
+  .opts button[aria-pressed="true"] { background: #11171c; color:#fff; border-color: #11171c; }
   .na { font-size:13px; color:var(--ink-3); }
   .notes { width:100%; margin-top:8px; font:inherit; font-size:14px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; }
   .actions { position: sticky; bottom: 0; background: var(--fog); padding: 12px 0; display:flex; gap:10px; }
-  .btn { font:inherit; border-radius:10px; padding:9px 14px; border:1.5px solid var(--ink); background:var(--paper); cursor:pointer; font-weight:600; }
-  .btn.primary { background:var(--ink); color:#fff; }
+  .btn { font:inherit; border-radius:8px; height:36px; padding:0 14px; border:1px solid var(--line); background:var(--paper); cursor:pointer; font-weight:450; }
+  .btn.primary { background:#11171c; color:#fff; border-color:transparent; }
   details { margin: 0 0 18px; background: var(--paper); border:1px solid var(--line); border-radius:12px; padding: 10px 14px; }
   details summary { cursor:pointer; font-weight:600; }
   table { border-collapse: collapse; font-size: 13px; margin-top: 8px; }

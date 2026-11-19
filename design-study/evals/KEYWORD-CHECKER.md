@@ -19,7 +19,7 @@ The keyword checker (`lint.py`) is a rule-based baseline for the [rubric](rubric
 
 v1 read only the message text. It ignored the `context` field, which records what else is on screen.
 
-- **Example:** `r-push-ask` scored 0 on Next move, though the Approve and Deny buttons sit on the same card.
+- **Example:** `r-push-ask` scored 0 on Next move, though the Approve and Reject buttons sit on the same card.
 - **Effect:** every approval message lost 2 points, including messages that were complete.
 
 ### 2. Every surface scored on all five checks
@@ -54,7 +54,7 @@ Rules can't tell whether a suggested move is available to this reader. "Ask your
 
 | Gap | Fix in `lint.py` |
 |---|---|
-| 1. No surface context | Reads `context`. For approval messages, visible Approve and Deny (or Reject) controls count as a Next move. A visible session title gives partial Actor credit for tooltips. |
+| 1. No surface context | Reads `context`. For approval messages, visible Approve and Reject (or Deny) controls count as a Next move. A visible session title gives partial Actor credit for tooltips. |
 | 2. All five checks on every surface | An `APPLIES` table lists the checks for each surface. Checks that don't apply are scored `n/a`, and the total is scaled to 10 over the applicable checks. |
 | 3. Narrow phrase lists | Broader patterns: conditional consequences ("if you deny…", "will skip / stop / continue / tell"), hedged activity ("may still"), and imperatives after a comma, colon, or "or". |
 | 4. Hard-coded actor | Actor context comes from general patterns: a parent agent ("sub-agent"), kebab-case session names, repo or branch paths, and where the agent runs ("on your laptop", "in a cloud sandbox"). |

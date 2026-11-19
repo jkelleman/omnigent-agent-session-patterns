@@ -41,7 +41,7 @@ When one badge has to summarize a session, the highest-severity state wins:
 
 Needs you › Lost contact › Failed › Blocked › Working › Starting › Recovered › Done
 
-A request waiting on a person ranks first, because in a multi-agent fleet the person's attention is the bottleneck.
+A request waiting on a person ranks first, because the agent stays blocked until someone answers.
 
 ## Anatomy of a "Needs you" request
 
@@ -59,7 +59,7 @@ Every approval request carries seven parts, on every surface:
 
 <img src="images/proposed/approve-anatomy.png" alt="The seven parts, numbered on the proposed phone approval screen" width="360">
 
-On a phone, parts 1, 2, 4, and 7 are always visible, and the rest are one tap away. Approve and Deny sit within thumb reach, and Deny is never the visually dominant button.
+On a phone, parts 1, 2, 4, and 7 are always visible, and the rest are one tap away. Approve and Reject sit within thumb reach, and Reject is never the visually dominant button.
 
 ## Scope ladder
 

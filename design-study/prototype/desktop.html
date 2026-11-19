@@ -6,7 +6,7 @@
 <title>Agent session patterns: desktop orchestration</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <style>
-  /* Tokens from Omnigent's light theme (web/src/themePalettes.generated.css, web/src/index.css) */
+  /* Desktop type uses --desktop-ui-font-size (14px): text-ui 14px, text-sm 13px. Tokens from Omnigent's light theme (web/src/themePalettes.generated.css, web/src/index.css) */
   :root {
     --background: #ffffff;
     --foreground: #27272a;
@@ -37,15 +37,17 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; }
-  body { font-family: var(--font-sans); color: var(--foreground); background: #e9e9ec; font-size: 14px; line-height: 1.45; font-weight: 450; }
+  body { font-family: var(--font-sans); color: var(--foreground); background: #e9e9ec; font-size: 14px; line-height: 1.6; font-weight: 450; }
+  .text-sm { font-size: 13px; line-height: 1.3; }
   button { font: inherit; color: inherit; }
   :focus-visible { outline: 2px solid var(--session-active); outline-offset: 2px; }
   .ico { width: 16px; height: 16px; flex: none; }
   .s > span { min-width: 0; }
-  code, pre { font-family: var(--font-mono); font-size: 12.5px; }
+  code, pre { font-family: var(--font-mono); font-size: 13px; }
+  code { background: var(--muted); border-radius: var(--radius-sm); padding: 0 4px; }
 
   .page { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
-  .review-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 20px; background: #1f1f23; color: #f4f4f5; font-size: 13px; }
+  .review-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 20px; background: #1f1f23; color: #f4f4f5; font-size: 12px; }
   .review-bar strong { margin-right: 6px; }
   .review-bar button { background: transparent; border: 1px solid #3f3f46; color: #e4e4e7; border-radius: 999px; padding: 4px 12px; cursor: pointer; }
   .review-bar button[aria-pressed="true"] { background: #f4f4f5; color: #1f1f23; border-color: #f4f4f5; }
@@ -56,21 +58,23 @@
 
   /* Sidebar */
   .sidebar { background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
-  .brand { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 10px; font-weight: 650; font-size: 15px; }
-  .new { margin: 0 12px 10px; padding: 7px 10px; border-radius: var(--radius-lg); border: 1px solid var(--button-border); background: var(--background); text-align: left; cursor: pointer; }
-  .fleet { margin: 0 12px 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .fleet div { background: var(--background); border: 1px solid var(--border-weak); border-radius: var(--radius-lg); padding: 6px 8px; }
-  .fleet b { display: block; font-size: 16px; }
-  .fleet span { font-size: 11.5px; color: var(--muted-foreground); }
-  .group { padding: 6px 16px 4px; font-size: 12px; color: var(--muted-foreground); font-weight: 600; }
+  .brand { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 12px 0 16px; font-weight: 600; font-size: 14px; }
+  .new { display: flex; align-items: center; gap: 8px; width: calc(100% - 24px); margin: 0 12px 8px; height: 32px; padding: 0 10px; border-radius: var(--radius-lg); border: 0; background: var(--accent); text-align: left; cursor: pointer; font-weight: 500; }
+  .search { display: flex; align-items: center; gap: 8px; margin: 0 12px 12px; height: 32px; padding: 0 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--background); color: var(--muted-foreground); font-size: 13px; }
+  .fleet { margin: 0 12px 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .fleet div { background: var(--background); border: 1px solid var(--border-weak); border-radius: 999px; padding: 1px 9px; display: flex; gap: 4px; align-items: baseline; }
+  .fleet b { font-size: 13px; font-weight: 500; }
+  .fleet span { font-size: 12px; color: var(--muted-foreground); }
+  .group { padding: 6px 16px 4px; font-size: 13px; color: var(--muted-foreground); }
   .sessions { list-style: none; margin: 0; padding: 0 8px; overflow-y: auto; }
   .s { width: 100%; display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: start; text-align: left; padding: 8px; border: 0; border-radius: var(--radius-lg); background: transparent; cursor: pointer; }
   .s:hover { background: var(--accent); }
   .s[aria-current="true"] { background: var(--sidebar-active); }
+  .s[aria-current="true"] .t { color: var(--primary); }
   .s .ico { width: 16px; height: 16px; margin-top: 2px; }
-  .s .t { font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .s .m { font-size: 12px; color: var(--muted-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .s .tag { font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+  .s .t { font-weight: 450; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .s .m { font-size: 13px; color: var(--muted-foreground); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .s .tag { font-size: 12px; font-weight: 500; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
   .tag.needs { background: color-mix(in srgb, var(--brand-accent) 15%, transparent); color: var(--brand-accent); }
   .tag.lost { background: var(--secondary); color: var(--muted-foreground); }
   .sidebar .foot { margin-top: auto; padding: 12px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted-foreground); }
@@ -78,13 +82,13 @@
   /* Main */
   .main { display: grid; grid-template-rows: auto auto 1fr auto; min-height: 0; }
   .header { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
-  .header h1 { font-size: 15px; margin: 0; font-weight: 650; }
-  .header .meta { color: var(--muted-foreground); font-size: 12.5px; }
+  .header h1 { font-size: 14px; margin: 0; font-weight: 500; }
+  .header .meta { color: var(--muted-foreground); font-size: 13px; }
   .header .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .avatars { display: flex; }
   .av { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; border: 2px solid var(--background); margin-left: -6px; }
-  .presence { font-size: 12.5px; color: var(--muted-foreground); }
-  .hbtn { border: 1px solid var(--button-border); background: var(--background); border-radius: var(--radius-md); padding: 4px 10px; font-size: 12.5px; cursor: pointer; }
+  .presence { font-size: 13px; color: var(--muted-foreground); }
+  .hbtn { border: 1px solid var(--border); background: var(--background); border-radius: var(--radius-md); height: 28px; padding: 0 10px; font-size: 13px; cursor: pointer; }
   .banner { display: none; align-items: center; gap: 10px; padding: 8px 20px; font-size: 13px; border-bottom: 1px solid var(--border); background: var(--accent); }
   .banner.on { display: flex; }
   .banner a { color: var(--link); }
@@ -92,48 +96,52 @@
   .transcript { overflow-y: auto; padding: 20px 0 28px; }
   .col { max-width: 760px; margin: 0 auto; padding: 0 24px; }
   .msg { margin: 0 0 16px; }
-  .msg .who { font-size: 12px; color: var(--muted-foreground); margin-bottom: 3px; }
+  .msg .who { font-size: 13px; color: var(--muted-foreground); margin-bottom: 3px; }
   .bubble { background: var(--secondary); border-radius: 14px; padding: 8px 12px; display: inline-block; max-width: 85%; }
   .user { text-align: right; }
-  .tool { font-size: 12.5px; color: var(--muted-foreground); display: flex; gap: 8px; align-items: center; margin: 6px 0 14px; }
-  .tool code { background: var(--muted); padding: 1px 6px; border-radius: var(--radius-sm); color: var(--foreground); }
+  .tool { font-size: 13px; color: var(--muted-foreground); display: flex; gap: 8px; align-items: center; margin: 6px 0 14px; }
+  .tool code { color: var(--foreground); }
 
   /* Approval card in Omnigent's card style */
-  .card { border: 1px solid var(--border); border-radius: var(--radius-otto-md); background: var(--background); margin: 8px 0 18px; overflow: hidden; }
+  .card { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--background); margin: 8px 0 18px; padding: 8px 10px; display: grid; grid-template-columns: 16px 1fr; column-gap: 8px; }
+  .card > .ico { margin-top: 5px; }
+  .card > :not(.ico) { grid-column: 2; }
   .card.pending { border-color: color-mix(in srgb, var(--brand-accent) 45%, var(--border)); }
-  .card-h { display: flex; align-items: center; gap: 8px; padding: 12px 14px 4px; }
-  .card-h .title { font-weight: 650; }
-  .card-h .ico { width: 18px; height: 18px; flex: none; }
-  .card-meta { padding: 0 14px 0 40px; font-size: 12.5px; color: var(--muted-foreground); }
-  .card-b { padding: 10px 14px 12px 40px; display: grid; gap: 8px; }
-  .row2 { display: grid; grid-template-columns: 120px 1fr; gap: 10px; font-size: 13px; }
+  .card-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+  .card-h .title { font-weight: 500; }
+  .card-h .inline-meta { color: var(--muted-foreground); font-size: 13px; }
+
+  .card-meta { font-size: 13px; color: var(--muted-foreground); }
+  .card-b { padding: 6px 0 4px; display: grid; gap: 6px; font-size: 13px; }
+  .row2 { display: grid; grid-template-columns: 140px 1fr; gap: 10px; font-size: 13px; line-height: 1.45; }
   .row2 .k { color: var(--muted-foreground); }
-  .owner { font-weight: 600; }
+  .owner { font-weight: 500; }
   .cmd { background: var(--muted); border-radius: var(--radius-md); padding: 8px 10px; margin: 0; white-space: pre-wrap; }
-  .deadline { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--foreground); background: var(--tag-pink); border-radius: var(--radius-md); padding: 7px 10px; }
+  .deadline { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--foreground); background: var(--tag-pink); border-radius: var(--radius-md); padding: 7px 10px; }
   .deadline .bar { flex: 0 0 120px; height: 5px; border-radius: 3px; background: color-mix(in srgb, var(--brand-accent) 20%, transparent); overflow: hidden; }
   .deadline .bar span { display: block; height: 100%; width: 96%; background: var(--brand-accent); }
-  .scope { display: inline-flex; border: 1px solid var(--button-border); border-radius: var(--radius-md); overflow: hidden; }
-  .scope button { border: 0; background: var(--background); padding: 5px 10px; font-size: 12.5px; cursor: pointer; border-right: 1px solid var(--button-border); }
+  .scope { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; width: fit-content; }
+  .scope button { border: 0; background: var(--background); height: 28px; padding: 0 10px; font-size: 13px; cursor: pointer; border-right: 1px solid var(--border); }
   .scope button:last-child { border-right: 0; }
-  .scope button[aria-pressed="true"] { background: var(--foreground); color: var(--background); }
+  .scope button[aria-pressed="true"] { background: var(--secondary); font-weight: 500; }
   .scope button:disabled { color: var(--foreground-tertiary); cursor: not-allowed; }
-  .card-f { display: flex; align-items: center; gap: 8px; padding: 10px 14px 12px 40px; border-top: 1px solid var(--border-weak); }
-  .btn { border-radius: var(--radius-md); padding: 6px 12px; font-size: 13px; cursor: pointer; border: 1px solid var(--button-border); background: var(--background); }
-  .btn.primary { background: var(--foreground); color: var(--background); border-color: var(--foreground); }
-  .card-f .hint { margin-left: auto; font-size: 12px; color: var(--muted-foreground); }
-  .resolved { padding: 10px 14px 12px 40px; font-size: 13px; }
-  .resolved b { color: var(--status-green); }
-  details summary { cursor: pointer; color: var(--muted-foreground); font-size: 12.5px; }
+  .card-f { display: flex; align-items: center; gap: 8px; padding-top: 6px; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; border-radius: var(--radius-lg); padding: 0 10px; font-size: 14px; font-weight: 450; cursor: pointer; border: 1px solid var(--border); background: var(--background); }
+  .btn svg { width: 16px; height: 16px; }
+  .btn.primary { background: #11171c; color: #fff; border-color: transparent; }
+  .card-f .hint { margin-left: auto; font-size: 13px; color: var(--muted-foreground); }
+  .resolved { padding: 4px 0 2px; font-size: 13px; }
+  .resolved b { color: var(--status-green); font-weight: 500; }
+  details summary { cursor: pointer; color: var(--muted-foreground); font-size: 13px; }
 
   .composer { padding: 12px 20px 16px; }
   .composer .box { max-width: 760px; margin: 0 auto; border: 1px solid var(--border); border-radius: var(--radius-otto-md); padding: 10px 12px; color: var(--foreground-tertiary); display: flex; justify-content: space-between; align-items: center; }
   .composer .box.viewonly { background: var(--accent); color: var(--foreground); }
-  .note-pill { font-size: 12px; color: var(--muted-foreground); }
-  .status-line { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted-foreground); margin: 4px 0 14px; }
+  .note-pill { font-size: 13px; color: var(--muted-foreground); }
+  .status-line { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted-foreground); margin: 4px 0 14px; }
   .status-line .ico { width: 16px; height: 16px; }
-  .lost-panel { border: 1px solid var(--border); border-radius: var(--radius-otto-md); padding: 16px; margin: 8px 0 18px; }
-  .lost-panel h3 { margin: 0 0 4px; font-size: 15px; display: flex; gap: 8px; align-items: center; }
+  .lost-panel { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 10px 12px; margin: 8px 0 18px; }
+  .lost-panel h3 { margin: 0 0 4px; font-size: 14px; font-weight: 500; display: flex; gap: 8px; align-items: center; }
   .lost-panel p { margin: 6px 0; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -155,16 +163,17 @@
   <div class="window" role="application" aria-label="Desktop prototype">
     <aside class="sidebar" aria-label="Sessions">
       <div class="brand">Omnigent <span class="note-pill">6 sessions</span></div>
-      <button class="new">+ New session</button>
+      <button class="new"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>New session</span></button>
+      <div class="search"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search sessions</span></div>
       <div class="fleet" aria-label="Fleet summary">
-        <div><b>1</b><span>Needs you</span></div>
-        <div><b>1</b><span>Lost</span></div>
-        <div><b>1</b><span>Blocked</span></div>
-        <div><b>2</b><span>Working</span></div>
+        <div><b>1</b><span>needs you</span></div>
+        <div><b>1</b><span>lost</span></div>
+        <div><b>1</b><span>blocked</span></div>
+        <div><b>2</b><span>working</span></div>
       </div>
       <div class="group">Sorted by what needs you</div>
       <ul class="sessions">
-        <li><button class="s" data-view="approve"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#df3c85"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></svg><span><span class="t" style="display:block">auth-retry</span><span class="m" style="display:block">Polly with Codex · answer by 9:41 PM tomorrow</span></span><span class="tag needs">Needs you</span></button></li>
+        <li><button class="s" data-view="approve"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#df3c85"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></svg><span><span class="t" style="display:block">auth-retry</span><span class="m" style="display:block">Codex · answer by 9:41 PM tomorrow</span></span><span class="tag needs">Needs you</span></button></li>
         <li><button class="s" data-view="lost"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.6" fill="#8e99a4"/></svg><span><span class="t" style="display:block">flaky-tests</span><span class="m" style="display:block">Claude Code · last heard 6 min ago</span></span><span class="tag lost">Lost</span></button></li>
         <li><button class="s" data-view="blocked"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18 6" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span class="t" style="display:block">release-notes</span><span class="m" style="display:block">Claude Code · force push not allowed</span></span></button></li>
         <li><button class="s" data-view="codriving"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#2f7fd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#2f7fd4"/></svg><span><span class="t" style="display:block">docs-migration</span><span class="m" style="display:block">Cursor · co-driving with Priya · 12s ago</span></span></button></li>
@@ -201,8 +210,7 @@ const VIEWS = {
       <div class="msg"><div class="who">Polly</div>Split into two tasks. Codex is implementing; Claude Code will review the diff.</div>
       <div class="tool">${ICON["done"]} Codex edited <code>auth/client.py</code>, <code>tests/test_refresh.py</code> · 14 tests passed</div>
       <div class="card pending" id="card">
-        <div class="card-h">${ICON["needs-you"]}<span class="title">Codex needs your answer</span></div>
-        <div class="card-meta">Sub-agent of Polly · auth-retry · Codex harness</div>
+        ${ICON["needs-you"]}<div class="card-h"><span class="title">Codex needs your answer</span><span class="inline-meta">· Sub-agent of Polly · Codex</span></div>
         <div class="card-b" id="card-b">
           <div class="row2"><span class="k">Wants to</span><span>Push 3 commits to <code>feature/auth-retry</code> on GitHub</span></div>
           <div class="row2"><span class="k">Why it paused</span><span>Pushes to GitHub need approval. <span class="owner">Set by your workspace admin.</span></span></div>
@@ -217,7 +225,7 @@ const VIEWS = {
             <button disabled title="Only your admin can change this rule">Always for Codex</button></span></div>
           <div class="deadline"><span>If no one answers by <b>9:41 PM tomorrow</b>, the push is denied and Polly stops this step.</span><span class="bar" role="img" aria-label="23 of 24 hours left"><span></span></span><span>23 h left</span></div>
         </div>
-        <div class="card-f" id="card-f"><button class="btn" id="deny">Deny</button><button class="btn primary" id="approve">Approve once</button><span class="hint">Always is off: your admin owns this rule</span></div>
+        <div class="card-f" id="card-f"><button class="btn primary" id="approve"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Approve once</span></button><button class="btn" id="deny"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg><span>Reject</span></button><span class="hint">Always is off: your admin owns this rule</span></div>
       </div>`
   },
   blocked: {
@@ -228,14 +236,14 @@ const VIEWS = {
       <div class="msg user"><span class="bubble">Squash the release notes commits and update release/2.4.</span></div>
       <div class="tool">${ICON["done"]} Claude Code squashed 4 commits into 1</div>
       <div class="card">
-        <div class="card-h">${ICON["blocked"]}<span class="title">Force pushes aren't allowed in this workspace</span></div>
+        ${ICON["blocked"]}<div class="card-h"><span class="title">Force pushes aren't allowed in this workspace</span><span class="inline-meta">· Claude Code</span></div>
         <div class="card-meta">Claude Code tried to force push <code>release/2.4</code> · the step was skipped</div>
         <div class="card-b">
           <div class="row2"><span class="k">What you can do</span><span>Ask the agent to push without force. If the history really needs rewriting, ask your workspace admin. <span class="owner">They own this rule.</span></span></div>
           <details><summary>Details for admins</summary><pre class="cmd">policy: github_access   param: deny_force_push = true
 level:  server-wide     phase: tool_call   verdict: DENY</pre></details>
         </div>
-        <div class="card-f"><button class="btn primary" id="redirect">Ask Claude Code to push without force</button></div>
+        <div class="card-f"><button class="btn primary" id="redirect"><span>Ask Claude Code to push without force</span></button></div>
       </div>`
   },
   lost: {
@@ -270,8 +278,7 @@ level:  server-wide     phase: tool_call   verdict: DENY</pre></details>
       <div class="msg user"><div class="who">You</div><span class="bubble">Move the API reference pages to the new docs layout.</span></div>
       <div class="msg"><div class="who">Cursor</div>Moving 18 pages. Two pages have custom components that need a decision.</div>
       <div class="card">
-        <div class="card-h">${ICON["done"]}<span class="title">Cursor's question was answered</span></div>
-        <div class="card-meta">Answered by <b>Priya</b> · 2 min ago</div>
+        ${ICON["done"]}<div class="card-h"><span class="title">Cursor's question was answered</span><span class="inline-meta">· Answered by Priya · 2 min ago</span></div>
         <div class="resolved"><b>Approved for this session</b> by Priya: Cursor can write to <code>docs/v2/</code> without asking until the session ends.</div>
       </div>
       <div class="msg user"><div class="who">Priya</div><span class="bubble">Keep the custom tabs component, but restyle it with the new tokens.</span></div>
@@ -314,7 +321,7 @@ function wireApproval() {
   document.querySelectorAll(".scope [data-scope]").forEach(btn => btn.onclick = () => {
     scope = btn.dataset.scope;
     document.querySelectorAll(".scope [data-scope]").forEach(x => x.setAttribute("aria-pressed", x === btn ? "true" : "false"));
-    document.getElementById("approve").textContent = label[scope];
+    document.getElementById("approve").querySelector("span").textContent = label[scope];
   });
   const resolve = (html) => {
     document.getElementById("card").classList.remove("pending");
@@ -322,7 +329,7 @@ function wireApproval() {
     document.getElementById("card-f").remove();
   };
   document.getElementById("approve").onclick = () => resolve(`<b>${done[scope][0]}</b> by you. ${done[scope][1]}`);
-  document.getElementById("deny").onclick = () => resolve(`<b style="color:var(--foreground)">Denied</b> by you. Polly will stop this step and wait for your next message. The commits stay on the local branch.`);
+  document.getElementById("deny").onclick = () => resolve(`<b style="color:var(--foreground)">Rejected</b> by you. Polly will stop this step and wait for your next message. The commits stay on the local branch.`);
 }
 document.addEventListener("click", e => {
   const t = e.target.closest("[data-view]"); if (!t) return;

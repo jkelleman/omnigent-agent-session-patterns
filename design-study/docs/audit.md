@@ -181,7 +181,7 @@ The last reason in the list above tells the reader to change a setting. Rules se
 </tr>
 </table>
 
-The team's own reliability analysis notes that when a runner goes offline, the client can stay **stuck on "working" until timeout** (`CUJ-ANALYSIS.md` §2.A). A spinner that runs while nothing is happening makes every other status label harder to trust.
+The team's own reliability analysis notes that when a runner goes offline, the client can stay **stuck on "working" until timeout** (`CUJ-ANALYSIS.md` §2.A). When the spinner keeps running on a dead session, people learn to second-guess every status label.
 
 **Pattern:** status answers two questions: what the agent is doing, and whether it can continue. "Working" always carries a last-heard time and changes to **Lost contact** past a threshold. Each state also has a distinct shape, so color isn't the only signal:
 

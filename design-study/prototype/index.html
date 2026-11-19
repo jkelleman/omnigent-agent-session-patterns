@@ -5,34 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent session patterns: mobile prototype</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --fog: #E6EAEE;
-    --paper: #FAFBFC;
-    --ink: #1C2733;
-    --ink-2: #4E5B68;
-    --ink-3: #7A8691;
-    --line: #D5DBE1;
-    --amber: #A35F00;      /* needs you */
-    --amber-wash: #FFF3E0;
-    --teal: #1F7A72;       /* working */
-    --violet: #5B4FA0;     /* lost contact */
-    --violet-wash: #EFEDF8;
-    --red: #B8322A;        /* failed */
-    --slate: #46525E;      /* blocked */
-    --slate-wash: #EDF0F3;
-    --done: #8A949D;
-    --sans: "Atkinson Hyperlegible Next", system-ui, sans-serif;
-    --mono: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+    /* Omnigent light-theme tokens (web/src/themePalettes.generated.css, web/src/index.css) */
+    --fog: #e9e9ec;
+    --paper: #ffffff;
+    --ink: #27272a;
+    --ink-2: #71717a;
+    --ink-3: #a1a1aa;
+    --line: #e4e4e7;
+    --amber: #df3c85;      /* needs you: --brand-accent */
+    --amber-wash: rgba(240, 1, 150, 0.06);
+    --teal: #2f7fd4;       /* working: --session-active */
+    --violet: #8e99a4;     /* lost contact: --status-gray */
+    --violet-wash: #f2f1f2;
+    --red: #f04858;        /* failed: --status-red */
+    --slate: #52525b;      /* blocked */
+    --slate-wash: #f2f1f2;
+    --done: #8e99a4;
+    --green: #2ea65c;      /* --status-green */
+    --cta: #11171c;        /* --primary-cta */
+    --sans: ui-sans-serif, system-ui, sans-serif;
+    --mono: "Geist Mono Variable", "JetBrains Mono", ui-monospace, monospace;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
     background: var(--fog); color: var(--ink); font-family: var(--sans);
-    font-size: 16px; line-height: 1.45;
+    font-size: 16px; line-height: 1.6; font-weight: 450;
     min-height: 100vh;
   }
   button { font: inherit; color: inherit; }
@@ -44,7 +44,7 @@
     grid-template-columns: minmax(220px, 300px) 390px minmax(240px, 320px);
     justify-content: center; padding: 48px 32px 64px;
   }
-  .intro h1 { font-size: 28px; line-height: 1.15; font-weight: 800; margin: 0 0 12px; letter-spacing: -0.01em; }
+  .intro h1 { font-size: 28px; line-height: 1.15; font-weight: 600; margin: 0 0 12px; letter-spacing: -0.01em; }
   .intro p { color: var(--ink-2); margin: 0 0 14px; max-width: 34ch; }
   .intro .fine { font-size: 13px; color: var(--ink-3); }
   .jump { display: flex; flex-direction: column; gap: 6px; margin: 22px 0 18px; }
@@ -53,7 +53,7 @@
     padding: 8px 12px; cursor: pointer; display: flex; gap: 10px; align-items: center; font-size: 15px;
   }
   .jump button:hover { background: rgba(255,255,255,.55); }
-  .jump button[aria-current="true"] { background: var(--paper); border-color: var(--line); font-weight: 700; }
+  .jump button[aria-current="true"] { background: var(--paper); border-color: var(--line); font-weight: 500; }
   .jump .sig { width: 4px; height: 18px; border-radius: 2px; flex: none; }
   .toggle { display: flex; gap: 10px; align-items: center; font-size: 15px; cursor: pointer; }
   .toggle input { width: 18px; height: 18px; accent-color: var(--ink); }
@@ -67,14 +67,14 @@
     content: counter(n); width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: var(--paper);
     font-size: 12px; font-weight: 700; display: grid; place-items: center; margin-top: 1px;
   }
-  .notes li b { display: block; }
+  .notes li b { display: block; font-weight: 500; }
   .notes li span { color: var(--ink-2); }
   .notes a { color: var(--ink); }
 
   /* ---------- Phone ---------- */
   .phone {
     width: 390px; height: 800px; background: var(--paper); border-radius: 44px;
-    border: 10px solid #22303C; box-shadow: 0 30px 60px -30px rgba(28,39,51,.45);
+    border: 10px solid #27272a; box-shadow: 0 30px 60px -30px rgba(28,39,51,.45);
     overflow: hidden; position: relative; display: flex; flex-direction: column;
   }
   .statusbar { height: 44px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font-size: 14px; font-weight: 700; }
@@ -82,7 +82,7 @@
   .screen.on { display: flex; }
 
   .topbar { padding: 6px 20px 14px; display: flex; align-items: center; gap: 10px; }
-  .topbar h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
+  .topbar h2 { margin: 0; font-size: 24px; font-weight: 600; }
   .back { background: none; border: 0; padding: 6px 4px; font-size: 16px; cursor: pointer; color: var(--ink-2); }
   .sub { padding: 0 20px 12px; color: var(--ink-2); font-size: 15px; }
 
@@ -95,61 +95,62 @@
   }
   .row:hover { background: rgba(28,39,51,.03); }
   .row .bar { border-radius: 3px; }
-  .row .state { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-  .row .name { font-weight: 700; font-size: 17px; }
+  .row .state { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .row .name { font-weight: 500; font-size: 16px; }
   .row .agent { font-size: 14px; color: var(--ink-3); }
   .row .what { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
-  .row .when { font-size: 13px; margin-top: 6px; font-weight: 600; }
+  .row .when { font-size: 14px; margin-top: 4px; font-weight: 500; }
 
   /* Detail */
   .band { padding: 4px 20px 18px; }
-  .band .state { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .band .state { font-weight: 500; font-size: 15px; display: flex; align-items: center; gap: 8px; }
   .band .state i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-  .band h3 { font-size: 26px; line-height: 1.15; font-weight: 800; margin: 8px 0 8px; letter-spacing: -0.01em; }
+  .band h3 { font-size: 22px; line-height: 1.25; font-weight: 600; margin: 8px 0 8px; }
   .band .who { color: var(--ink-2); font-size: 15px; }
   .section { padding: 14px 20px; border-top: 1px solid var(--line); }
-  .section h4 { margin: 0 0 4px; font-size: 14px; color: var(--ink-3); font-weight: 600; }
+  .section h4 { margin: 0 0 4px; font-size: 15px; color: var(--ink-2); font-weight: 450; }
   .section p { margin: 0; }
-  .owner { font-weight: 700; }
+  .owner { font-weight: 500; }
   details summary { cursor: pointer; color: var(--ink-2); font-size: 15px; }
   pre {
-    font-family: var(--mono); font-size: 13px; background: var(--slate-wash); border-radius: 8px;
+    font-family: var(--mono); font-size: 13px; background: #0000000f; border-radius: 6px;
     padding: 10px 12px; margin: 8px 0 0; white-space: pre-wrap; word-break: break-word;
   }
   code { font-family: var(--mono); font-size: 0.9em; }
 
   /* Scope ladder */
   fieldset { border: 0; margin: 0; padding: 0; }
-  legend { font-size: 14px; color: var(--ink-3); font-weight: 600; margin-bottom: 6px; padding: 0; }
+  legend { font-size: 15px; color: var(--ink-2); font-weight: 450; margin-bottom: 6px; padding: 0; }
   .scope { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 9px 0; align-items: start; cursor: pointer; }
   .scope input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--ink); }
   .scope small { display: block; color: var(--ink-3); font-size: 13px; }
   .scope.disabled { color: var(--ink-3); cursor: not-allowed; }
 
   /* Deadline rail: the one bold element */
-  .deadline { padding: 14px 20px 14px; background: var(--amber-wash); border-top: 1px solid #F1D9B5; border-bottom: 1px solid #F1D9B5; }
+  .deadline { padding: 14px 20px 14px; background: var(--amber-wash); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .deadline + .section { border-top: 0; }
   .deadline p { margin: 0 0 10px; font-size: 15px; }
-  .rail { height: 8px; background: #F1D9B5; border-radius: 4px; position: relative; overflow: hidden; }
+  .rail { height: 6px; background: color-mix(in srgb, var(--amber) 20%, transparent); border-radius: 4px; position: relative; overflow: hidden; }
   .rail span { position: absolute; inset: 0 auto 0 0; background: var(--amber); border-radius: 4px; width: 88%; transform-origin: left; }
-  .rail-labels { display: flex; justify-content: space-between; font-size: 12px; color: #7A4A08; margin-top: 6px; }
+  .rail-labels { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-2); margin-top: 6px; }
 
   .actions { position: sticky; bottom: 0; background: var(--paper); padding: 12px 20px 22px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; border-top: 1px solid var(--line); margin-top: auto; }
-  .btn { border-radius: 12px; padding: 14px 12px; font-weight: 700; font-size: 16px; cursor: pointer; border: 1.5px solid var(--ink); background: var(--paper); }
-  .btn.primary { background: var(--ink); color: var(--paper); }
+  .btn { border-radius: 8px; height: 44px; padding: 0 12px; font-weight: 450; font-size: 16px; cursor: pointer; border: 1px solid var(--line); background: var(--paper); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .btn svg { width: 16px; height: 16px; }
+  .btn.primary { background: var(--cta); color: #fff; border-color: transparent; }
   .btn.full { grid-column: 1 / -1; }
 
-  .resolved { margin: 18px 20px 0; padding: 14px 16px; border-radius: 12px; background: var(--slate-wash); }
-  .resolved b { display: block; font-size: 17px; margin-bottom: 4px; }
+  .resolved { margin: 18px 20px 0; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); }
+  .resolved b { display: block; font-size: 16px; font-weight: 500; margin-bottom: 4px; }
   .resolved p { margin: 0; color: var(--ink-2); font-size: 15px; }
-  .resolved.yes { background: #E5F2F0; }
-  .resolved.yes b { color: var(--teal); }
+  .resolved.yes { background: var(--paper); }
+  .resolved.yes b { color: var(--green); }
   .resolved.flash { animation: settle .45s ease-out; }
   @keyframes settle { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
 
   .note-box { margin: 14px 20px 0; }
-  .note-box label { font-size: 14px; color: var(--ink-3); font-weight: 600; display: block; margin-bottom: 6px; }
-  .note-box textarea { width: 100%; min-height: 72px; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px; font: inherit; resize: vertical; }
+  .note-box label { font-size: 15px; color: var(--ink-2); font-weight: 450; display: block; margin-bottom: 6px; }
+  .note-box textarea { width: 100%; min-height: 72px; border: 1px solid var(--line); border-radius: 8px; padding: 10px; font: inherit; resize: vertical; }
 
   .ico { width: 16px; height: 16px; flex: none; }
   .row .state { align-items: center; gap: 6px; }
@@ -194,8 +195,8 @@
       <button data-go="expired"><span class="sig" style="background:var(--done)"></span>A request nobody answered</button>
     </nav>
     <label class="toggle"><input type="checkbox" id="anatomy"> Show the request anatomy</label>
-    <p style="margin-top:18px"><a href="desktop.html" style="color:var(--ink)">Open the desktop orchestration view</a>, built with Omnigent's own design tokens, including watch, co-drive, and fork.</p>
-    <p class="fine" style="margin-top:22px">An independent design study. Databricks has not reviewed or endorsed it. The sessions and names are made up. Polly is Omnigent's example orchestrator agent.</p>
+    <p style="margin-top:18px"><a href="desktop.html" style="color:var(--ink)">Open the desktop orchestration view</a>, including watch, co-drive, and fork.</p>
+    <p class="fine" style="margin-top:22px">An independent design study, styled with Omnigent's light-theme tokens. Databricks has not reviewed or endorsed it. The sessions and names are made up. Polly is Omnigent's example orchestrator agent.</p>
   </section>
 
   <div class="phone" role="region" aria-label="Phone prototype">
@@ -209,7 +210,7 @@
         <li><button class="row" data-go="approve">
           <span class="bar" style="background:var(--amber)"></span>
           <span>
-            <span class="state" style="color:var(--amber);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#A35F00"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></svg>Needs you</span>
+            <span class="state" style="color:var(--amber);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#df3c85"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></svg>Needs you</span>
             <span class="name" style="display:block">auth-retry</span>
             <span class="agent" style="display:block">Polly, with Codex as a sub-agent</span>
             <span class="what" style="display:block">Codex wants to push 3 commits to GitHub.</span>
@@ -218,7 +219,7 @@
         <li><button class="row" data-go="lost">
           <span class="bar" style="background:var(--violet)"></span>
           <span>
-            <span class="state" style="color:var(--violet);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="#5B4FA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="#5B4FA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.6" fill="#5B4FA0"/></svg>Lost contact</span>
+            <span class="state" style="color:var(--violet);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.6" fill="#8e99a4"/></svg>Lost contact</span>
             <span class="name" style="display:block">flaky-tests</span>
             <span class="agent" style="display:block">Claude Code on your laptop</span>
             <span class="when" style="display:block;color:var(--violet)">Last heard 6 min ago</span>
@@ -226,7 +227,7 @@
         <li><button class="row" data-go="blocked">
           <span class="bar" style="background:var(--slate)"></span>
           <span>
-            <span class="state" style="color:var(--slate);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#46525E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18 6" fill="none" stroke="#46525E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Blocked</span>
+            <span class="state" style="color:var(--slate);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18 6" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Blocked</span>
             <span class="name" style="display:block">release-notes</span>
             <span class="agent" style="display:block">Claude Code in a cloud sandbox</span>
             <span class="what" style="display:block">Force pushes aren't allowed in this workspace.</span>
@@ -234,7 +235,7 @@
         <li><button class="row" data-go="list" aria-disabled="true">
           <span class="bar" style="background:var(--teal)"></span>
           <span>
-            <span class="state" style="color:var(--teal);display:flex"><svg class="ico pulse-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#1F7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#1F7A72"/></svg>Working</span>
+            <span class="state" style="color:var(--teal);display:flex"><svg class="ico pulse-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#2f7fd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#2f7fd4"/></svg>Working</span>
             <span class="name" style="display:block">docs-migration</span>
             <span class="agent" style="display:block">Cursor in a cloud sandbox</span>
             <span class="what" style="display:block">Editing 4 files</span>
@@ -243,7 +244,7 @@
         <li><button class="row" data-go="list" aria-disabled="true">
           <span class="bar" style="background:var(--done)"></span>
           <span>
-            <span class="state" style="color:var(--ink-3);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Done</span>
+            <span class="state" style="color:var(--ink-3);display:flex"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Done</span>
             <span class="name" style="display:block">lint-cleanup</span>
             <span class="agent" style="display:block">Pi on your laptop</span>
             <span class="what" style="display:block">Finished with 2 files changed. Ready for review.</span>
@@ -255,7 +256,7 @@
     <section class="screen" id="s-approve" aria-label="Approval request">
       <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
       <div class="band">
-        <div class="state" style="color:var(--amber)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#A35F00"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></svg>Needs you</div>
+        <div class="state" style="color:var(--amber)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#df3c85"/><path d="M9.3 9.4a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2.9-1.2 1.8v.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.2" r="1.25" fill="#fff"/></svg>Needs you</div>
         <h3><span class="mk">2</span>Codex wants to push 3 commits to GitHub</h3>
         <div class="who"><span class="mk">1</span>Sub-agent of Polly, in session auth-retry, on branch <code>feature/auth-retry</code></div>
       </div>
@@ -291,8 +292,8 @@
       </div>
       <div id="approve-result" hidden></div>
       <div class="actions" id="approve-actions">
-        <button class="btn" id="deny">Deny</button>
-        <button class="btn primary" id="approve">Approve once</button>
+        <button class="btn" id="deny"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg><span>Reject</span></button>
+        <button class="btn primary" id="approve"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Approve once</span></button>
       </div>
     </section>
 
@@ -300,7 +301,7 @@
     <section class="screen" id="s-blocked" aria-label="Blocked by a policy">
       <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
       <div class="band">
-        <div class="state" style="color:var(--slate)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#46525E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18 6" fill="none" stroke="#46525E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Blocked</div>
+        <div class="state" style="color:var(--slate)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 18 18 6" fill="none" stroke="#52525b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Blocked</div>
         <h3>Force pushes aren't allowed in this workspace</h3>
         <div class="who">Claude Code, in session release-notes, tried to force push <code>release/2.4</code>.</div>
       </div>
@@ -328,7 +329,7 @@ phase:  tool_call  verdict: DENY</pre>
     <section class="screen" id="s-lost" aria-label="Lost contact">
       <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
       <div class="band">
-        <div class="state" style="color:var(--violet)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="#5B4FA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="#5B4FA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.6" fill="#5B4FA0"/></svg>Lost contact</div>
+        <div class="state" style="color:var(--violet)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 20.5A8.5 8.5 0 0 1 3.5 12" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.6" fill="#8e99a4"/></svg>Lost contact</div>
         <h3>Can't reach your laptop</h3>
         <div class="who">Session flaky-tests runs Claude Code on your laptop. We last heard from it 6 minutes ago.</div>
       </div>
@@ -350,7 +351,7 @@ phase:  tool_call  verdict: DENY</pre>
     <section class="screen" id="s-expired" aria-label="Expired request">
       <div class="topbar"><button class="back" data-go="list">‹ Agents</button></div>
       <div class="band">
-        <div class="state" style="color:var(--ink-3)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Denied automatically</div>
+        <div class="state" style="color:var(--ink-3)"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Denied automatically</div>
         <h3>Nobody answered, so the push was denied</h3>
         <div class="who">Codex, sub-agent of Polly, in session auth-retry. Asked yesterday at 9:41 PM.</div>
       </div>
@@ -377,7 +378,7 @@ const NOTES = {
     lede: "Sessions are sorted by severity, with requests waiting on the person first. Each row shows the state, the agent, and any deadline.",
     items: [
       ["One shape and color per state", "Each shape is distinct, so the state reads in monochrome, in notifications, and for color-blind users."],
-      ["Needs you comes first", "In a multi-agent fleet, the person's attention is the bottleneck."],
+      ["Needs you comes first", "A request waiting on a person blocks work until they answer, so it ranks above every other state."],
       ["Working shows a last-heard time", "The status only reports activity the runner has confirmed."],
       ["Harness names in the metadata", "Rows read the same whether Codex, Claude Code, or Cursor is running."]
     ]
@@ -464,8 +465,8 @@ function resolve(html, cls) {
   const st = document.querySelector("#s-approve .band .state");
   st.style.color = cls === "yes" ? "var(--teal)" : "var(--ink-3)";
   st.innerHTML = cls === "yes"
-    ? `<svg class="ico pulse-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#1F7A72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#1F7A72"/></svg>Working`
-    : `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8A949D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Denied`;
+    ? `<svg class="ico pulse-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#2f7fd4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="4" fill="#2f7fd4"/></svg>Working`
+    : `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 12.3l2.7 2.7L16 9.6" fill="none" stroke="#8e99a4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Rejected`;
   document.getElementById("approve-actions").innerHTML =
     `<button class="btn primary full" data-go="list">Back to agents</button>`;
 }
@@ -480,13 +481,13 @@ function resetApproval() {
 function wireApproval() {
   const btn = document.getElementById("approve");
   document.querySelectorAll('input[name="scope"]').forEach(r =>
-    r.addEventListener("change", () => { btn.textContent = SCOPE[r.value].button; }));
+    r.addEventListener("change", () => { btn.querySelector("span").textContent = SCOPE[r.value].button; }));
   btn.addEventListener("click", () => {
     const s = SCOPE[document.querySelector('input[name="scope"]:checked').value];
     resolve(`<b>${s.label}</b><p>${s.detail}</p>`, "yes");
   });
   document.getElementById("deny").addEventListener("click", () => {
-    resolve(`<b>Denied</b><p>Polly will stop this step and wait for your next message. The commits stay on the local branch.</p>`, "");
+    resolve(`<b>Rejected</b><p>Polly will stop this step and wait for your next message. The commits stay on the local branch.</p>`, "");
   });
 }
 
