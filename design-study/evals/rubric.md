@@ -2,7 +2,7 @@
 
 This rubric scores one message, such as an approval prompt, a policy block, a status label, or a resolution label, **as the person sees it on that surface**. A sidebar tooltip isn't expected to carry everything a full approval card does, so each message comes with a `surface` and a `context` that describe what else is visible at the same time. Credit information the person can see without tapping.
 
-The reader is **the person supervising the agent**, not the person who wrote the policy.
+Score from the point of view of **the person supervising the agent**. The policy's author is a different reader.
 
 ## Five checks
 
@@ -20,10 +20,10 @@ Each check is scored 0, 1, or 2.
 
 ## Scoring notes
 
-- **Don't penalize brevity.** Penalize missing information the reader needs. A three-word label can score 2 on a check if the surrounding surface supplies the rest.
-- **A move the reader can't take scores 0** on Next move, even if it's correct for someone else. An instruction to set a policy parameter scores 0 when the reader isn't the admin.
-- **Uncertain wording isn't a flaw.** "May need input" is correct when the system is inferring.
-- **Judge the words, not the visuals.** Assume color and icons carry nothing, because they don't survive screen readers, notifications, or a different harness.
+- **Score missing information.** Length alone doesn't lower a score. A three-word label can score 2 on a check when the surrounding surface supplies the rest.
+- **A move the reader can't take scores 0** on Next move, even when it's correct for someone else. An instruction to set a policy parameter scores 0 when the reader isn't the admin.
+- **Hedged wording is correct for inferred states.** "May need input" scores normally when the system is inferring.
+- **Score the words only.** Give no credit for color or icons, because they're lost in screen readers, notifications, and other harnesses.
 
 ## Output format (for the judge)
 

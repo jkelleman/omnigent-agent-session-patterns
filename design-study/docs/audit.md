@@ -1,10 +1,10 @@
 # Audit: approvals, status, and errors in Omnigent
 
-**Scope:** the moments when a person has to understand, or act on, an agent they aren't watching. That covers approval prompts, session status, policy blocks, timeouts, and errors.
+**Scope:** the handoffs where a person has to understand or act on an agent running unattended: approval prompts, session status, policy blocks, timeouts, and errors.
 
 **Method:** Part 1 is a source read of [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) at commit `ce5f47b` (Nov 15, 2026). The screenshots of Omnigent today are its own visual-test reference images and docs images (see [the notice](images/omnigent/NOTICE.md)). Part 2 is hands-on use on desktop and phone.
 
-**Note:** Omnigent is alpha, and a lot is already done well. I've called those out too, because good patterns should be kept on purpose, not by accident.
+**Note:** Omnigent is in alpha, and much of it already works well. The audit also lists the patterns worth keeping, so they survive as the product changes.
 
 ---
 
@@ -25,7 +25,7 @@
 
 ## Part 1: What the source shows
 
-### 1. The same event speaks in a different voice for each harness
+### 1. The same event reads differently in each harness
 
 When an agent stops to ask the person something, both the card's header and its wording depend on which harness is underneath:
 
@@ -36,9 +36,9 @@ When an agent stops to ask the person something, both the card's header and its 
 <td><img src="images/omnigent/approval-remember-domain.png" alt="Approval card titled 'Approval required · Claude Code', reading 'Claude wants to fetch the Storybook documentation.'"></td>
 </tr>
 <tr>
-<td>"Command approval" · "Codex wants to run this command."</td>
-<td>"Approval required" · "Allow <b>the agent</b> to remove…"</td>
-<td>"Approval required" · "Claude wants to fetch…"</td>
+<td>Title: "Command approval"<br>Body: "Codex wants to run this command."</td>
+<td>Title: "Approval required"<br>Body: "Allow <b>the agent</b> to remove…"</td>
+<td>Title: "Approval required"<br>Body: "Claude wants to fetch…"</td>
 </tr>
 </table>
 
@@ -53,11 +53,11 @@ Question cards vary the same way:
 
 `web/src/components/blocks/ApprovalCard.tsx`
 
-**Why it matters:** Omnigent's promise is one layer over many harnesses. When the wording changes with the harness, the seams show. A person scanning five sessions on a phone has to re-read each card to learn that it means the same thing. When the card says only "the agent," a person running a fleet can't tell which one is asking.
+**Why it matters:** Omnigent's value is a single layer over many harnesses, and inconsistent wording exposes the harness underneath. A person scanning five sessions on a phone has to read each card closely to see that they describe the same event. When a card says only "the agent," a person running several agents can't tell which one is asking.
 
-**Pattern:** one title for one event, whatever the harness: **"[Agent name] needs your answer."** The harness goes in the metadata line, not the headline.
+**Pattern:** use one title per event across all harnesses: **"[Agent name] needs your answer."** The harness name moves to the metadata line.
 
-### 2. The scope of an approval is named differently before and after you tap
+### 2. Approval scope uses different words before and after the tap
 
 Before the tap, the "remember" button changes from card to card:
 
@@ -81,9 +81,9 @@ After the tap, the resolved card can show at least 10 different labels (`Approva
 | "Approved · directory access for this session" | "Always allowed" | "Approved · auto-accepting edits" |
 | | "Always allow requested" | |
 
-Each label is accurate. Together, they leave the question that matters for trust unanswered: **how far does my yes reach?** "Remember," "don't ask again," and "always allowed" may or may not mean the same scope, and the person can't tell from the words.
+Each label is accurate on its own. Together, they leave the person unsure **how far an approval reaches.** "Remember," "don't ask again," and "always allowed" may or may not grant the same scope, and the wording doesn't say.
 
-**Pattern:** a three-step scope ladder (**Just this once · This session · Always for this agent**), named the same way on the button before you tap and on the label after.
+**Pattern:** a three-step scope ladder (**Just this once**, **This session**, **Always for this agent**), worded the same on the button and on the resolved label.
 
 <table>
 <tr><th>Proposed: choose the scope before you tap</th><th>Proposed: the same words afterward</th></tr>
@@ -95,7 +95,7 @@ Each label is accurate. Together, they leave the question that matters for trust
 
 The numbers mark the seven parts of a request. See [agent-states.md › Anatomy](agent-states.md#anatomy-of-a-needs-you-request).
 
-### 3. Saying nothing is a decision, but the deadline is invisible until it passes
+### 3. The approval timeout is hidden until it expires
 
 - **The timeout:** the default `ask_timeout` is **86,400 seconds (24 hours)** (`omnigent/spec/types.py`). On timeout, the request resolves as a deny, and any state the policy would have written is dropped: "a denied ASK must leave no trace" (`omnigent/runtime/policies/approval.py`).
 - **While the request is pending,** the card shows Approve and Reject, but no deadline and no default.
@@ -103,7 +103,7 @@ The numbers mark the seven parts of a request. See [agent-states.md › Anatomy]
 
 <img src="images/omnigent/approval-prompt-expired.png" alt="Expired card: 'Prompt expired · Claude Code. Claude wants to run the project tests. Nobody answered before the agent stopped waiting. Send a message to continue.'" width="540">
 
-"Send a message to continue" is a good next move. What's missing is the **outcome**. "The agent stopped waiting" describes the agent, not the request. It doesn't say the action was denied, or what state the work is in. And the person only learns about the deadline after it has passed.
+"Send a message to continue" gives a clear next move. The card leaves out the **outcome**: "the agent stopped waiting" describes the agent's state, and doesn't say that the action was denied or what state the work is in. The person also learns about the deadline only after it passes.
 
 **Pattern:**
 
@@ -118,13 +118,13 @@ The numbers mark the seven parts of a request. See [agent-states.md › Anatomy]
 </tr>
 </table>
 
-### 4. Policy messages are written for the policy author, not the person approving
+### 4. Policy messages are written for policy authors
 
 Omnigent's own docs describe three policy owners:
 
 <img src="images/omnigent/policy-trust-model.png" alt="Omnigent's policy trust model: user policy, developer policy, and IT policy all apply to an agent session" width="640">
 
-The interface doesn't say which of those owners a rule came from. Instead, it shows the policy's internal name and the enforcement phase:
+The interface doesn't say which owner set a rule. It shows the policy's internal name and enforcement phase:
 
 <table>
 <tr>
@@ -133,27 +133,27 @@ The interface doesn't say which of those owners a rule came from. Instead, it sh
 </tr>
 <tr>
 <td>Header: <code>approve_shell_commands (tool_call)</code></td>
-<td>"Blocked by policy · before tool call." There's a clear reason, but no owner and no next move.</td>
+<td>"Blocked by policy · before tool call." The reason is clear, but the message names no owner and no next move.</td>
 </tr>
 </table>
 
-The built-in policy reasons follow the same pattern. Policy reasons become the `message` on the request that reaches the approval surface (`approval.py`: `ElicitationRequest(message=result.reason …)`):
+The built-in policy reasons follow the same pattern. Each reason becomes the `message` on the elicitation request that reaches the approval surface (`approval.py`: `ElicitationRequest(message=result.reason …)`):
 
 - "Elevated session risk."
 - "Blocked by the blast-radius policy."
 - "GitHub operation blocked by policy."
 - "Force push is blocked by policy. Remove the force flag (--force / -f / --force-with-lease / --force-if-includes / +refspec) or set deny_force_push=False."
 
-The last one tells the reader to change a setting. But rules set in an agent's spec can't be changed from a session (`designs/CUJ-ANALYSIS.md` §2.D), and server rules belong to the admin. So the person reading it often *can't* do what it suggests.
+The last reason tells the reader to change a setting. Rules set in an agent's spec can't be changed from a session (`designs/CUJ-ANALYSIS.md` §2.D), and server rules belong to the admin, so the person reading the message often has no way to act on it.
 
-**Pattern:** every policy message names the rule in plain words, **who owns it**, and the move available to *this* reader. The config details go in a "Details for admins" disclosure.
+**Pattern:** every policy message states the rule in plain words, **who owns it**, and the move available to this reader. Configuration details go in a collapsed "Details for admins" section.
 
 <table>
 <tr><th>Proposed: a policy block in three layers</th></tr>
 <tr><td width="50%"><img src="images/proposed/blocked.png" alt="Proposed blocked screen: 'Force pushes aren't allowed in this workspace', what you can do, who owns the rule, a message box, and collapsed admin details" width="390"></td></tr>
 </table>
 
-### 5. Status describes the transcript, not the agent
+### 5. Status labels describe the transcript
 
 <table>
 <tr>
@@ -161,14 +161,14 @@ The last one tells the reader to change a setting. But rules set in an agent's s
 <td width="38%"><img src="images/omnigent/sidebar-badges.png" alt="Omnigent sidebar badges, enlarged: Needs response, Running, Starting, New messages. Running and Starting use the same spinner."></td>
 </tr>
 <tr>
-<td>The error says <i>that</i> something failed, then shows the raw API error. It doesn't say whether the agent stopped, will retry, or needs you.</td>
+<td>The card reports a failure and shows the raw API error. It doesn't say whether the agent stopped, will retry, or needs the person.</td>
 <td>Running and Starting render the same spinner. The error badge's tooltip reads "Latest message is an error."</td>
 </tr>
 </table>
 
-The team's own reliability analysis also notes that when a runner goes offline, the client can stay **stuck on "working" until timeout** (`CUJ-ANALYSIS.md` §2.A). A spinner that keeps going when nothing is happening costs more trust than any error message.
+The team's own reliability analysis notes that when a runner goes offline, the client can stay **stuck on "working" until timeout** (`CUJ-ANALYSIS.md` §2.A). A spinner that runs while nothing is happening makes every other status label harder to trust.
 
-**Pattern:** status answers "what is the agent doing, and can it continue?" "Working" is only shown with a "last heard" time. Past a threshold, it changes to **Lost contact**. Each state gets its own shape, not just its own color:
+**Pattern:** status answers two questions: what the agent is doing, and whether it can continue. "Working" always carries a last-heard time and changes to **Lost contact** past a threshold. Each state also has a distinct shape, so color isn't the only signal:
 
 <img src="images/state-icons.svg" alt="Eight session state icons in color and monochrome: Starting, Working, Needs you, Blocked, Lost contact, Failed, Recovered, Done">
 
@@ -189,16 +189,16 @@ The team's own reliability analysis also notes that when a runner goes offline, 
 <td><img src="images/omnigent/approval-resolved-elsewhere.png" alt="'Resolved elsewhere · Claude Code'"></td>
 </tr>
 <tr>
-<td>A known error in plain words, naming the agent.</td>
-<td>The problem plus the next move, in one line.</td>
-<td>Explains why a card closed without your input.</td>
+<td>Names the agent and states a known error in plain words.</td>
+<td>States the problem and the next move in one line.</td>
+<td>Explains why a card closed without the person's input.</td>
 </tr>
 </table>
 
-- **Uncertain states are worded as uncertain.** When the runner *infers* that a terminal is waiting for input, the badge says **"May need input"** instead of "Needs response." A code comment explains why: "The runner infers this reason from the terminal's screen, so stay tentative." That's exactly the right instinct, and it should be a written principle.
+- **Inferred states are hedged.** When the runner infers from the terminal screen that it's waiting for input, the badge reads **"May need input."** A code comment explains the choice: "The runner infers this reason from the terminal's screen, so stay tentative." This belongs in the written content guidelines.
 - **Requests from sub-agents are attributed** ("Requested by sub-agent …").
 - **The expired card gives a next step** ("Send a message to continue").
-- **Policy composition is principled:** session → spec → admin, the first deny wins, and several ASKs merge into one approval. That gives the interface a solid model to explain.
+- **Policy composition is well defined:** session, then spec, then admin; the first DENY wins, and multiple ASK verdicts merge into one approval. The interface can explain this model directly.
 
 ---
 

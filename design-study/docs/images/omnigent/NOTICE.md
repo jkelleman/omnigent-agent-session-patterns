@@ -6,4 +6,4 @@ The images in this folder come from [Omnigent](https://github.com/omnigent-ai/om
 - All the other screenshots are Omnigent's own visual-test reference images, rendered from its Storybook stories, in `tests/e2e_ui/visual/snapshots/`. They show the real components with example data.
 - `sidebar-badges.png` enlarges four of those badge images, arranges them in a grid, and labels the state each one shows. `host-offline.png` is cropped.
 
-This design study is independent and is not affiliated with or endorsed by Databricks.
+This design study is independent. Databricks has not reviewed or endorsed it.

@@ -1,8 +1,8 @@
 """LLM-as-judge for the message rubric.
 
 Scores every message in messages.jsonl against rubric.md, in context, and
-optionally measures agreement with human scores, which is the step that makes
-a judge trustworthy.
+optionally measures agreement with human scores. Agreement with human
+reviewers is what makes the judge's scores usable.
 
 Usage:
     pip install anthropic

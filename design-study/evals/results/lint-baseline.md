@@ -1,16 +1,16 @@
 # Lint baseline
 
-Rule-based scores (A = Actor, Ac = Action, C = Cause, Co = Consequence, N = Next move). See `lint.py` for the rules and their limits.
+Rule-based scores (A = Actor, Ac = Action, C = Cause, Co = Consequence, N = Next move). The rules and their limits are in `lint.py`.
 
 - **omnigent**: mean 1.2/10, 0/11 pass
-- **rewrite**: mean 6.8/10, 3/11 pass
+- **rewrite**: mean 6.6/10, 3/11 pass
 
 | id | variant | text | A | Ac | C | Co | N | total | pass |
 |---|---|---|---|---|---|---|---|---|---|
 | o-risk | omnigent | Elevated session risk. | 0 | 1 | 0 | 0 | 0 | 1 | no |
 | r-risk | rewrite | Claude Code has run several risky commands in this session, so the … | 2 | 2 | 2 | 2 | 0 | 8 | no |
 | o-blast-ask | omnigent | High-blast-radius command needs approval | 0 | 1 | 1 | 0 | 0 | 2 | no |
-| r-blast-ask | rewrite | Polly wants to run a command that deletes files outside the project… | 1 | 2 | 2 | 0 | 2 | 7 | no |
+| r-blast-ask | rewrite | Polly wants to run a command that deletes files outside the project… | 1 | 2 | 2 | 0 | 0 | 5 | no |
 | o-blast-deny | omnigent | Blocked by the blast-radius policy. | 0 | 1 | 0 | 0 | 0 | 1 | no |
 | r-blast-deny | rewrite | Polly can't run `rm -rf ../build` because commands that delete outs… | 1 | 2 | 2 | 1 | 0 | 6 | no |
 | o-gh-deny | omnigent | GitHub operation blocked by policy. | 0 | 1 | 0 | 0 | 0 | 1 | no |

@@ -1,9 +1,9 @@
 """Rule-based baseline for the message rubric.
 
-Runs with no dependencies and no API key. It's deliberately crude: the point
-is to show which checks string rules can approximate (Actor, Cause owner,
-config-in-the-message) and which need a judge that reads meaning
-(Consequence, whether a Next move is actually available to this reader).
+Runs with no dependencies and no API key. String rules can approximate some
+checks (Actor, the rule owner in Cause, configuration syntax in a message).
+Others need a judge that reads the message in context (Consequence, and
+whether a Next move is available to this reader). The baseline shows the gap.
 
 Usage:
     python evals/lint.py                 # print table
@@ -87,7 +87,7 @@ def main():
     rows = load()
     scores = {r["id"]: score(r["text"]) for r in rows}
     md = ("# Lint baseline\n\nRule-based scores (A = Actor, Ac = Action, C = Cause, "
-          "Co = Consequence, N = Next move). See `lint.py` for the rules and their limits.\n\n"
+          "Co = Consequence, N = Next move). The rules and their limits are in `lint.py`.\n\n"
           + summary(rows, scores) + "\n\n" + table(rows, scores) + "\n")
     if args.out:
         args.out.write_text(md)

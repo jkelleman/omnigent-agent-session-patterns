@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent session patterns: mobile prototype</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;600&family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -183,7 +184,7 @@
 <main class="stage">
   <section class="intro" aria-labelledby="intro-h">
     <h1 id="intro-h">Supervising agents from your phone</h1>
-    <p>This is a working prototype of the mobile side of a meta-harness like Omnigent. You're away from your desk and five coding sessions are running. What needs you, and what happens if you don't answer?</p>
+    <p>A working prototype of a mobile supervision view for a meta-harness like Omnigent. Five coding sessions are running while you're away from your desk. The view answers two questions: what needs you, and what happens if you don't respond.</p>
     <p>Tap a session in the phone, or jump to a state:</p>
     <nav class="jump" aria-label="Jump to a screen">
       <button data-go="list"><span class="sig" style="background:var(--ink)"></span>All sessions</button>
@@ -193,7 +194,7 @@
       <button data-go="expired"><span class="sig" style="background:var(--done)"></span>A request nobody answered</button>
     </nav>
     <label class="toggle"><input type="checkbox" id="anatomy"> Show the request anatomy</label>
-    <p class="fine" style="margin-top:22px">An unofficial design study, not affiliated with Databricks. The sessions and names are made up. Polly is Omnigent's example orchestrator agent.</p>
+    <p class="fine" style="margin-top:22px">An independent design study. Databricks has not reviewed or endorsed it. The sessions and names are made up. Polly is Omnigent's example orchestrator agent.</p>
   </section>
 
   <div class="phone" role="region" aria-label="Phone prototype">
@@ -372,12 +373,12 @@ phase:  tool_call  verdict: DENY</pre>
 const NOTES = {
   list: {
     title: "Triage at a glance",
-    lede: "Sessions are sorted by what needs the person, not by recency. Each row answers: what state, which agent, and when it matters.",
+    lede: "Sessions are sorted by severity, with requests waiting on the person first. Each row shows the state, the agent, and any deadline.",
     items: [
-      ["One shape and color per state", "The shape carries the meaning on its own, so it survives monochrome, notifications, and color blindness."],
-      ["Needs you comes first", "The person's attention is the scarcest resource in a fleet."],
-      ["Working shows a last-heard time", "A spinner never claims activity the system can't verify."],
-      ["Harness in the metadata, not the headline", "Codex, Claude Code, and Cursor all read the same way."]
+      ["One shape and color per state", "Each shape is distinct, so the state reads in monochrome, in notifications, and for color-blind users."],
+      ["Needs you comes first", "In a multi-agent fleet, the person's attention is the bottleneck."],
+      ["Working shows a last-heard time", "The status only reports activity the runner has confirmed."],
+      ["Harness names in the metadata", "Rows read the same whether Codex, Claude Code, or Cursor is running."]
     ]
   },
   approve: {
@@ -387,33 +388,33 @@ const NOTES = {
       ["Who", "The agent, its parent if it's a sub-agent, and where it's working."],
       ["Wants to", "The action in plain words."],
       ["Exact action", "The real command, collapsed by default."],
-      ["Why it paused, and who owns the rule", "Here it's the workspace admin, so “Always” is turned off and the reason is shown."],
+      ["Why it paused, and who owns the rule", "The workspace admin owns this rule, so “Always” is disabled, with the reason shown."],
       ["What changes", "The effect, and whether it can be undone."],
-      ["Scope of your answer", "The same words on the button before the tap and on the label after."],
-      ["If you don't answer", "Saying nothing is a decision. The deadline and the default are shown up front."]
+      ["Scope of your answer", "The button and the resolved label use the same scope words."],
+      ["If you don't answer", "The timeout and its default, shown while the request is pending."]
     ]
   },
   blocked: {
     title: "Policy messages in three layers",
-    lede: "The headline and next move are for the person deciding. The config is for the person who owns the rule.",
+    lede: "The headline and next move are written for the person deciding. The configuration details are for the rule's owner.",
     items: [
       ["Headline", "The rule in plain words, with no mention of policy internals."],
-      ["Next move for this reader", "Something they can actually do, plus who to ask for the rest."],
+      ["Next move for this reader", "An action this reader can take, and who to ask for anything else."],
       ["Details for admins", "The policy name, parameter, level, and phase, collapsed."]
     ]
   },
   lost: {
-    title: "Honest status",
-    lede: "When the runner goes quiet, the UI stops showing the session as working. This screen says what we know and what we don't.",
+    title: "Status the system can confirm",
+    lede: "When the runner stops checking in, the session leaves the Working state. The screen states what the system knows and what it can't confirm.",
     items: [
-      ["Name the gap", "We last heard from it 6 minutes ago."],
-      ["Last known activity", "So the person can judge whether to worry."],
-      ["Uncertain wording for uncertain states", "“May still be working” instead of a false claim either way."]
+      ["Time since last contact", "Last heard 6 minutes ago."],
+      ["Last known activity", "Helps the person judge whether to step in."],
+      ["Hedged wording for an unconfirmed state", "“May still be working” avoids claiming either outcome."]
     ]
   },
   expired: {
     title: "When nobody answers",
-    lede: "A timeout counts as a deny. The card says what happened, what the agent did next, and how to pick the work back up.",
+    lede: "A timeout resolves as a deny. The card states the outcome, what the agent did next, and how to resume.",
     items: [
       ["Outcome first", "“Nobody answered, so the push was denied.”"],
       ["State of the work", "The commits are safe on the local branch."],
