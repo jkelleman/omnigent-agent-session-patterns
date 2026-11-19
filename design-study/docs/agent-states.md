@@ -2,7 +2,7 @@
 
 This spec defines a shared vocabulary for agent session state: what the agent is doing, what the person can do about it, and what the interface says in each case. It's harness-neutral, so a state looks and reads the same whether Claude Code, Codex, or a custom YAML agent is running.
 
-Each state is mapped to Omnigent's current implementation (`SessionStateBadge.tsx`, `ApprovalCard.tsx`, and `docs/POLICIES.md` at commit `ce5f47b`) to show where the gaps are.
+Each state is mapped to Omnigent's current implementation (`SessionStateBadge.tsx`, `ApprovalCard.tsx`, and `docs/POLICIES.md` at commit `c3b5dee`) to show where the gaps are.
 
 ## Principles
 
@@ -91,6 +91,17 @@ Omnigent sessions can be watched, co-driven, and forked. Each relationship gets 
 | **Watching** | "View only: *[owner]*'s session." A view-only banner takes the composer's place. |
 | **Co-driving** | Avatars of everyone who can send input. Each message is attributed to its sender. |
 | **Forked** | "Forked from *[session]* at *[step]*," with a link back. Approvals from the original session don't carry over, and the fork says so. |
+
+<table>
+<tr><th>Watching</th><th>Co-driving</th><th>Forked</th></tr>
+<tr>
+<td><img src="images/proposed/desktop-watching.png" alt="Desktop view of a watched session: a view-only banner with Ask to co-drive and Fork buttons, and a view-only composer"></td>
+<td><img src="images/proposed/desktop-codriving.png" alt="Desktop view of a co-driven session: two avatars, an attribution banner, and an approval marked as answered by Priya"></td>
+<td><img src="images/proposed/desktop-forked.png" alt="Desktop view of a forked session: a banner linking to the original session and noting that approvals don't carry over"></td>
+</tr>
+</table>
+
+These screens are from the [desktop prototype](../prototype/desktop.html), built with Omnigent's light-theme tokens.
 
 ## Open questions for the team
 

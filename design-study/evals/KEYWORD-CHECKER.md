@@ -98,7 +98,7 @@ These are content fixes. They don't change the checker.
 ## Limits that remain
 
 - **It still can't judge meaning.** A message can match every pattern and still mislead. The judge and human reviewers remain the reference.
-- **It was tuned on these 22 messages.** The new patterns are general, but improvements measured on the same messages they were built from overstate accuracy. Score a held-out set before relying on v2: the 10 new messages planned from Part 2 of the audit.
+- **It was tuned on these 22 messages.** The new patterns are general, but improvements measured on the same messages they were built from overstate accuracy. Score a held-out set before relying on v2: the messages collected in the [validation sessions](../docs/validation-plan.md).
 - **It can't model the reader.** Whether a move is available depends on the reader's role, which the judge has to infer from context.
 
 ## What to do next

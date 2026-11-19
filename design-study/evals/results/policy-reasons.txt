@@ -1,0 +1,71 @@
+{
+ "reason_sites": 68,
+ "static_text": 58,
+ "dynamic_unreadable": 10,
+ "ask": 14,
+ "deny": 42,
+ "names_owner": 0,
+ "generic_agent": 4,
+ "has_next_move": 14,
+ "config_syntax": 4,
+ "says_policy_without_owner": 12,
+ "files": 9
+}
+?    cel.py:106 owner=0 next=0 | 'Denied by policy.'
+ASK  cost.py:96 owner=0 next=1 | 'The active model has no catalog pricing so cumulative spend cannot be tracked. Continuing will allow untracked'
+ASK  cost.py:542 owner=0 next=0 | 'Session cost ${…} passed the ${…} warning threshold{…}. Continue?'
+ASK  cost.py:737 owner=0 next=0 | '{…} ${…} passed the ${…} daily warning threshold (daily limit ${…}). Continue?'
+ASK  cost.py:916 owner=0 next=1 | 'Subagent cost budget reached: subtree spend ${…} hit the ${…} cap attached when this sub-agent was spawned. Ap'
+ASK  cost.py:955 owner=0 next=0 | 'Subagent subtree cost ${…} passed the ${…} warning threshold{…}. Continue?'
+ASK  cost.py:1191 owner=0 next=0 | '{…} ${…} passed the ${…} {…} warning threshold ({…} limit ${…}). Continue?'
+DENY github.py:1450 owner=0 next=0 | 'GitHub operation blocked by policy.'
+DENY github.py:1520 owner=0 next=0 | '{…} Read is restricted to the configured repos; this call targets {…}.'
+DENY github.py:1556 owner=0 next=0 | '{…} Write is restricted to the configured repos; this call targets {…}.'
+DENY github.py:1621 owner=0 next=1 | '{…} Destructive operation {…} is blocked by default. Set allow_destructive=true to permit deletes.'
+ASK  github.py:1652 owner=0 next=1 | 'Could not parse a git/gh command ({…}) to check it against the GitHub policy. Approve to run it?'
+DENY github.py:1665 owner=0 next=1 | 'Force push is blocked by policy. Remove the force flag (--force / -f / --force-with-lease / --force-if-include'
+DENY github.py:1589 owner=0 next=0 | '{…} Unrecognized GitHub tool {…}.'
+DENY github.py:1609 owner=0 next=0 | '{…} Write call carries no identifiable target repo.'
+DENY github.py:1610 owner=0 next=0 | "{…} Write is restricted to branches {…} and this call's target branch could not be determined."
+DENY github.py:1672 owner=0 next=1 | '{…} Destructive operation `{…}` is blocked by default. Set allow_destructive=true to permit deletes.'
+DENY github.py:1677 owner=0 next=0 | '{…} Pushing tags is blocked by policy (deny_tag_push is enabled).'
+DENY github.py:1564 owner=0 next=0 | '{…} Write is restricted to branches {…}; this call targets {…}.'
+DENY github.py:1598 owner=0 next=0 | "{…} Read is restricted to the configured repos and this call's target repo could not be determined."
+ASK  github.py:1659 owner=0 next=1 | 'Reads are restricted to the configured repos, but the target repo of `{…}` could not be determined. Approve?'
+ASK  github.py:1684 owner=0 next=1 | 'The target repo of `{…}` could not be determined (e.g. a local remote alias). Approve this write?'
+ASK  github.py:1688 owner=0 next=1 | '`{…}` writes to an allowed repo but its target branch could not be determined, and writes are branch-restricte'
+DENY google.py:729 owner=0 next=0 | 'Google Drive operation blocked by policy.'
+DENY google.py:915 owner=0 next=0 | 'Gmail operation blocked by policy.'
+DENY google.py:1022 owner=0 next=0 | 'Google Calendar operation blocked by policy.'
+DENY google.py:613 owner=0 next=0 | '{…} Read restricted to the configured allowlist; this call targets a file outside it (or cannot be scoped).'
+DENY google.py:639 owner=0 next=0 | '{…} Commenting is restricted to permitted files.'
+DENY google.py:651 owner=0 next=0 | '{…} Writes are restricted to files this agent created this session{…}.'
+DENY google.py:656 owner=0 next=0 | '{…} Tool {…} is not permitted.'
+DENY google.py:867 owner=0 next=0 | '{…} Draft edits are restricted to drafts created this session.'
+DENY google.py:634 owner=0 next=0 | '{…} Creating new files is not permitted.'
+DENY google.py:642 owner=0 next=0 | '{…} Write call carries no identifiable target file.'
+DENY google.py:844 owner=0 next=0 | '{…} Reading mail is not permitted.'
+DENY google.py:850 owner=0 next=0 | '{…} Sending mail is not permitted (draft-only mode).'
+DENY google.py:856 owner=0 next=0 | '{…} Creating drafts is not permitted.'
+DENY google.py:860 owner=0 next=0 | '{…} Editing drafts is not permitted.'
+DENY google.py:874 owner=0 next=0 | '{…} Modifying messages / threads is not permitted.'
+DENY google.py:997 owner=0 next=0 | '{…} Reading the calendar is not permitted.'
+DENY google.py:1003 owner=0 next=0 | '{…} Creating events / calendars is not permitted.'
+DENY google.py:1009 owner=0 next=0 | '{…} Modifying or deleting events is not permitted.'
+DENY orchestration.py:356 owner=0 next=0 | 'Blocked by the blast-radius policy.'
+DENY orchestration.py:514 owner=0 next=1 | 'Every sys_session_send must declare what kind of work it is. Set args.purpose to one of `implement` (write pro'
+DENY orchestration.py:566 owner=0 next=0 | 'Worker writes must stay inside its worktree.'
+DENY orchestration.py:648 owner=0 next=0 | 'This agent is report-only: it may read files and run shell, but never write or edit them. Describe the change '
+DENY prompt.py:193 owner=0 next=0 | 'Invalid classifier action: {…}'
+DENY prompt.py:189 owner=0 next=0 | 'Policy classifier error (fail-closed).'
+?    risk_score.py:342 owner=0 next=0 | 'Elevated session risk.'
+DENY routing.py:169 owner=0 next=1 | "This task appears trivial and does not warrant the expensive model '{…}'. Use a smaller model for simple tasks"
+ASK  safety.py:388 owner=0 next=1 | 'Agent wants to add policy: {…}. Approve?'
+ASK  safety.py:555 owner=0 next=1 | 'Agent wants to set a reminder for this session {…}.\nWhen it fires, this message is sent into the session as a '
+ASK  safety.py:352 owner=0 next=1 | 'Agent wants to call {…}({…}). Approve?'
+DENY safety.py:536 owner=0 next=0 | 'Cannot set a reminder. The reminder message must be a non-empty string.'
+DENY safety.py:548 owner=0 next=0 | 'Cannot set a reminder. {…}'
+DENY safety.py:596 owner=0 next=0 | 'Cannot {…} a scheduled task. {…}'
+DENY safety.py:144 owner=0 next=0 | 'Exceeded {…} tool calls this session'
+ASK  safety.py:233 owner=0 next=0 | "The agent appears stuck in a retry loop — tool '{…}' called with identical arguments {…} times in the last {…}"
+DENY safety.py:713 owner=0 next=0 | "Skill '{…}' is blocked by policy"

@@ -2,7 +2,7 @@
 
 **Scope:** the handoffs where a person has to understand or act on an agent running unattended: approval prompts, session status, policy blocks, timeouts, and errors.
 
-**Method:** Part 1 is a source read of [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) at commit `ce5f47b` (Nov 15, 2026). The screenshots of Omnigent today are its own visual-test reference images and docs images (see [the notice](images/omnigent/NOTICE.md)). Part 2 is hands-on use on desktop and phone.
+**Method:** a source read of [omnigent-ai/omnigent](https://github.com/omnigent-ai/omnigent) at commit `c3b5dee` (Nov 18, 2026). The screenshots of Omnigent today are its own visual-test reference images and docs images (see [the notice](images/omnigent/NOTICE.md)). A [validation plan](validation-plan.md) covers hands-on testing.
 
 **Note:** Omnigent is in alpha, and much of it already works well. The audit also lists the patterns worth keeping, so they survive as the product changes.
 
@@ -23,7 +23,7 @@
 
 ---
 
-## Part 1: What the source shows
+## Findings
 
 ### 1. The same event reads differently in each harness
 
@@ -72,7 +72,7 @@ Before the tap, the "remember" button changes from card to card:
 </tr>
 </table>
 
-After the tap, the resolved card can show at least 10 different labels (`ApprovalCard.tsx`, around lines 793–855):
+After the tap, the resolved card can show at least 10 different labels (`ApprovalCard.tsx`, around lines 801–863):
 
 | Labels that mean "this session" | Labels that mean "from now on" | Others |
 |---|---|---|
@@ -144,7 +144,19 @@ The built-in policy reasons follow the same pattern. Each reason becomes the `me
 - "GitHub operation blocked by policy."
 - "Force push is blocked by policy. Remove the force flag (--force / -f / --force-with-lease / --force-if-includes / +refspec) or set deny_force_push=False."
 
-The last reason tells the reader to change a setting. Rules set in an agent's spec can't be changed from a session (`designs/CUJ-ANALYSIS.md` §2.D), and server rules belong to the admin, so the person reading the message often has no way to act on it.
+**Across all built-in policies,** a static read of `omnigent/policies/builtins/` finds 68 places that set an ASK or DENY reason, 58 of them readable as text ([script](../evals/policy_audit.py), [results](../evals/results/policy-reasons.txt)):
+
+| Measure | Count |
+|---|---|
+| Reasons that name the rule's owner | **0 of 58** |
+| Reasons that name the specific agent | 0 of 58 ("Agent wants…" in 4) |
+| Bare "blocked by policy" reasons with no cause | 8 |
+| Reasons that include configuration syntax, such as `allow_destructive=true` | 4 |
+| Reasons that include any next move | 14 of 58 (24%) |
+
+Some DENY reasons are instructions to the model ("Set args.purpose to one of…"), while the same string also reaches the person in the transcript. One field serves two audiences with different needs: the agent needs a corrective instruction, and the person needs the rule, its owner, and their own next move. Splitting the reason into an agent-facing message and a person-facing message would let each be written for its reader.
+
+The last reason in the list above tells the reader to change a setting. Rules set in an agent's spec can't be changed from a session (`designs/CUJ-ANALYSIS.md` §2.D), and server rules belong to the admin, so the person reading the message often has no way to act on it.
 
 **Pattern:** every policy message states the rule in plain words, **who owns it**, and the move available to this reader. Configuration details go in a collapsed "Details for admins" section.
 
@@ -152,6 +164,9 @@ The last reason tells the reader to change a setting. Rules set in an agent's sp
 <tr><th>Proposed: a policy block in three layers</th></tr>
 <tr><td width="50%"><img src="images/proposed/blocked.png" alt="Proposed blocked screen: 'Force pushes aren't allowed in this workspace', what you can do, who owns the rule, a message box, and collapsed admin details" width="390"></td></tr>
 </table>
+
+<img src="images/proposed/desktop-blocked.png" alt="The same policy block in the desktop prototype, styled with Omnigent's tokens">
+
 
 ### 5. Status labels describe the transcript
 
@@ -173,12 +188,15 @@ The team's own reliability analysis notes that when a runner goes offline, the c
 <img src="images/state-icons.svg" alt="Eight session state icons in color and monochrome: Starting, Working, Needs you, Blocked, Lost contact, Failed, Recovered, Done">
 
 <table>
-<tr><th>Proposed: triage across sessions</th><th>Proposed: honest about lost contact</th></tr>
+<tr><th>Proposed: triage across sessions</th><th>Proposed: lost contact, with the last activity</th></tr>
 <tr>
 <td width="50%"><img src="images/proposed/list.png" alt="Proposed session list sorted by what needs you, each with a state icon and, for working sessions, a last-heard time"></td>
 <td width="50%"><img src="images/proposed/lost.png" alt="Proposed lost-contact screen: 'Can't reach your laptop', last heard 6 minutes ago, and the last thing seen"></td>
 </tr>
 </table>
+
+<img src="images/proposed/desktop-lost.png" alt="Lost contact in the desktop prototype: last heard 6 minutes ago, last activity, and retry options">
+
 
 ### Already done well (keep these)
 
@@ -202,6 +220,6 @@ The team's own reliability analysis notes that when a runner goes offline, the c
 
 ---
 
-## Part 2: Hands-on
+## Validation
 
-*In progress: I'm running real sessions with Claude Code and Codex on the desktop app and the phone, focused on approvals made from the phone and on reconnecting after a host drops.*
+The findings above come from source code and Omnigent's visual-test screenshots. The [validation plan](validation-plan.md) checks them in real sessions on desktop and phone, with six scenarios mapped to the findings, and produces a held-out message set for the evals.

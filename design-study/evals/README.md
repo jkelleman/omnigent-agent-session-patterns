@@ -10,16 +10,32 @@ Agent messages in a meta-harness are templated, generated, and repeated across m
 | [`messages.jsonl`](messages.jsonl) | 11 real Omnigent strings with their source files, paired with 11 rewrites that follow the [pattern spec](../docs/agent-states.md) |
 | [`lint.py`](lint.py) | A rule-based baseline (v2) with no dependencies and no API key |
 | [`judge.py`](judge.py) | An LLM judge that scores each message against the rubric and reports agreement with human scores |
-| [`human_scores.csv`](human_scores.csv) | A template for human reviewers |
+| [`score.html`](score.html) | A scoring page for human reviewers that exports `human_scores.csv`. [Open it live](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/evals/score.html). Messages appear in shuffled order with the rewrite labels hidden. |
+| [`human_scores.csv`](human_scores.csv) | Human scores, with `n/a` marking checks that don't apply on a surface |
+| [`policy_audit.py`](policy_audit.py) | Extracts and classifies every reason string in Omnigent's built-in policies ([results](results/policy-reasons.txt)) |
 | [`KEYWORD-CHECKER.md`](KEYWORD-CHECKER.md) | Gaps found in the keyword checker, the fixes in v2, before-and-after results, and the scoring workflow diagram |
 | [`SCORING.md`](SCORING.md) | How scores are calculated, what the current results mean, and the roadmap to higher scores |
 | [`results/`](results/) | Output from each run |
+
+## Status
+
+| Step | Status |
+|---|---|
+| Rubric with applicability by surface | Done |
+| Keyword checker (v2) | Done; [results](results/lint-baseline.md) |
+| Policy-reason audit | Done; [results](results/policy-reasons.txt) |
+| Human scores from two reviewers | Ready to collect with [`score.html`](score.html) |
+| LLM judge run and agreement check | Ready to run once human scores are in |
+| Held-out messages from validation sessions | Planned in the [validation plan](../docs/validation-plan.md) |
+
+Until the human scores and judge run are in, the keyword checker's numbers are a baseline. They come from rules tuned on the same 22 messages.
 
 ## Run it
 
 ```bash
 cd design-study
 python evals/lint.py --out evals/results/lint-baseline.md
+python evals/build_score_page.py        # after editing messages.jsonl
 
 pip install anthropic
 export ANTHROPIC_API_KEY=...

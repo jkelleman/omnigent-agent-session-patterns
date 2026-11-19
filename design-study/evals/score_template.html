@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Score agent messages</title>
+<link rel="icon" href="../prototype/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --ink:#1C2733; --ink-2:#4E5B68; --ink-3:#7A8691; --line:#D5DBE1; --paper:#FAFBFC; --fog:#E6EAEE; --amber:#A35F00; --teal:#1F7A72; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--fog); color:var(--ink); font: 15px/1.5 system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .lede { color: var(--ink-2); margin: 0 0 18px; }
+  .bar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom: 16px; }
+  .bar label { font-size: 14px; color: var(--ink-2); }
+  .bar input { font: inherit; padding: 6px 8px; border:1px solid var(--line); border-radius:8px; }
+  .progress { margin-left:auto; font-size:14px; color:var(--ink-2); }
+  .card { background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:14px; }
+  .card.done { border-color: color-mix(in srgb, var(--teal) 50%, var(--line)); }
+  .meta { font-size:13px; color:var(--ink-3); margin-bottom:6px; }
+  .text { font-size:17px; font-weight:600; margin: 4px 0 8px; }
+  .ctx { font-size:14px; color:var(--ink-2); margin-bottom:12px; }
+  .check { display:grid; grid-template-columns: 130px 1fr; gap:10px; align-items:center; padding:6px 0; border-top:1px solid #edf0f3; }
+  .check .q { font-size:13px; color:var(--ink-3); }
+  .opts { display:flex; gap:6px; flex-wrap:wrap; }
+  .opts button { font: inherit; font-size:14px; border:1px solid var(--line); background:#fff; border-radius:8px; padding:4px 12px; cursor:pointer; }
+  .opts button[aria-pressed="true"] { background: var(--ink); color:#fff; border-color: var(--ink); }
+  .na { font-size:13px; color:var(--ink-3); }
+  .notes { width:100%; margin-top:8px; font:inherit; font-size:14px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; }
+  .actions { position: sticky; bottom: 0; background: var(--fog); padding: 12px 0; display:flex; gap:10px; }
+  .btn { font:inherit; border-radius:10px; padding:9px 14px; border:1.5px solid var(--ink); background:var(--paper); cursor:pointer; font-weight:600; }
+  .btn.primary { background:var(--ink); color:#fff; }
+  details { margin: 0 0 18px; background: var(--paper); border:1px solid var(--line); border-radius:12px; padding: 10px 14px; }
+  details summary { cursor:pointer; font-weight:600; }
+  table { border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  td, th { border:1px solid var(--line); padding:4px 8px; vertical-align: top; text-align:left; }
+  :focus-visible { outline: 3px solid #2F6FD6; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Score agent messages</h1>
+  <p class="lede">Score each message as the person supervising the agent would see it on that surface. Only the checks that apply on the surface are shown. When you're done, download the CSV and save it as <code>evals/human_scores.csv</code>.</p>
+  <details>
+    <summary>Rubric quick reference</summary>
+    <table>
+      <tr><th>Check</th><th>0</th><th>1</th><th>2</th></tr>
+      <tr><td>Actor</td><td>No agent, or "the agent"</td><td>Agent named, relationship unclear</td><td>Agent named, distinguishable from other sessions</td></tr>
+      <tr><td>Action</td><td>Missing or internal terms only</td><td>Vague or technical only</td><td>Specific, plain words</td></tr>
+      <tr><td>Cause</td><td>No reason, or "by policy" alone</td><td>Reason without an owner the reader can act on</td><td>Reason plus who set the rule</td></tr>
+      <tr><td>Consequence</td><td>Unstated</td><td>Partly stated</td><td>Every answer's result, or the state of the work</td></tr>
+      <tr><td>Next move</td><td>None, or one the reader can't take</td><td>Implied</td><td>One clear move this reader can take</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--ink-2)">Full rubric: <a href="rubric.md">rubric.md</a>. Give no credit for color or icons.</p>
+  </details>
+  <div class="bar">
+    <label>Reviewer <input id="reviewer" placeholder="Your name or initials"></label>
+    <label><input type="checkbox" id="hide-variant" checked> Hide which messages are rewrites</label>
+    <span class="progress" id="progress"></span>
+  </div>
+  <div id="list"></div>
+  <div class="actions">
+    <button class="btn primary" id="download">Download human_scores.csv</button>
+    <button class="btn" id="reset">Clear my scores</button>
+  </div>
+</main>
+<script>
+const MESSAGES = {{MESSAGES}};
+const APPLIES = {{APPLIES}};
+const CHECKS = ["actor","action","cause","consequence","next_move"];
+const LABEL = {actor:"Actor", action:"Action", cause:"Cause", consequence:"Consequence", next_move:"Next move"};
+const KEY = "agent-session-patterns-scores-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { state = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+// Shuffle once per reviewer so order doesn't bias scores.
+const order = MESSAGES.map((m, i) => [m, Math.sin(i * 9301 + 49297) % 1]).sort((a, b) => a[1] - b[1]).map(x => x[0]);
+
+function applies(m) { return APPLIES[m.surface] || CHECKS; }
+function complete(m) { const s = state[m.id] || {}; return applies(m).every(c => s[c] !== undefined); }
+
+function render() {
+  const hide = document.getElementById("hide-variant").checked;
+  document.getElementById("list").innerHTML = order.map(m => {
+    const s = state[m.id] || {};
+    const rows = CHECKS.map(c => applies(m).includes(c)
+      ? `<div class="check"><span class="q">${LABEL[c]}</span><span class="opts" role="group" aria-label="${LABEL[c]} score">${[0,1,2].map(v =>
+          `<button data-id="${m.id}" data-check="${c}" data-v="${v}" aria-pressed="${s[c] === v}">${v}</button>`).join("")}</span></div>`
+      : `<div class="check"><span class="q">${LABEL[c]}</span><span class="na">Doesn't apply on this surface</span></div>`).join("");
+    return `<section class="card ${complete(m) ? "done" : ""}" aria-label="Message ${m.id}">
+      <div class="meta">${hide ? "" : m.variant + " · "}${m.kind} · ${m.surface}</div>
+      <div class="text">${m.text.replace(/</g,"&lt;")}</div>
+      <div class="ctx">Also visible: ${m.context}</div>
+      ${rows}
+      <input class="notes" data-id="${m.id}" placeholder="Notes (optional)" value="${(s.notes || "").replace(/"/g,"&quot;")}">
+    </section>`;
+  }).join("");
+  const done = MESSAGES.filter(complete).length;
+  document.getElementById("progress").textContent = `${done} of ${MESSAGES.length} scored`;
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("button[data-check]"); if (!b) return;
+  const s = state[b.dataset.id] = state[b.dataset.id] || {};
+  s[b.dataset.check] = Number(b.dataset.v); save(); render();
+});
+document.addEventListener("change", e => {
+  if (e.target.matches(".notes")) { (state[e.target.dataset.id] = state[e.target.dataset.id] || {}).notes = e.target.value; save(); }
+  if (e.target.id === "hide-variant") render();
+});
+document.getElementById("download").onclick = () => {
+  const reviewer = document.getElementById("reviewer").value.trim();
+  const esc = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = ["id,actor,action,cause,consequence,next_move,reviewer,notes"];
+  for (const m of MESSAGES) {
+    const s = state[m.id] || {};
+    const cells = CHECKS.map(c => applies(m).includes(c) ? (s[c] ?? "") : "n/a");
+    lines.push([m.id, ...cells, esc(reviewer), esc(s.notes)].join(","));
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], { type: "text/csv" }));
+  a.download = "human_scores.csv"; a.click();
+};
+document.getElementById("reset").onclick = () => { state = {}; save(); render(); };
+render();
+</script>
+</body>
+</html>

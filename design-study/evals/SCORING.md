@@ -80,7 +80,7 @@ The lint score is a diagnostic. It doesn't need to reach a particular number, an
 ### Then
 - [ ] Run the LLM judge with an Anthropic API key, comparing against the human scores (`python evals/judge.py --human evals/human_scores.csv`).
 - [ ] Tune the judge prompt or rubric until agreement reaches 80% per check with no pass/fail disagreements.
-- [ ] Write 10 new messages from Part 2 of the audit as a held-out set, and confirm the agreement holds on them.
+- [ ] Collect 10 or more messages from the [validation sessions](../docs/validation-plan.md) as a held-out set, and confirm the agreement holds on them.
 
 ### Later
 - [ ] Publish the judge results and agreement table in `results/`.
