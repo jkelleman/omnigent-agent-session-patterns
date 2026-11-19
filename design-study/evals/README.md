@@ -11,6 +11,7 @@ Agent messages in a meta-harness are templated, generated, and repeated across m
 | [`lint.py`](lint.py) | A rule-based baseline with no dependencies and no API key |
 | [`judge.py`](judge.py) | An LLM judge that scores each message against the rubric and reports agreement with human scores |
 | [`human_scores.csv`](human_scores.csv) | A template for human reviewers |
+| [`SCORING.md`](SCORING.md) | How scores are calculated, what the current results mean, and the roadmap to higher scores |
 | [`results/`](results/) | Output from each run |
 
 ## Run it
