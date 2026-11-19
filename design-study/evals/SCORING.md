@@ -23,14 +23,16 @@ A message **passes** when it scores 7 or higher with no check at 0. The no-zero 
 
 The judge's scores only count once they agree with human scores. Human reviewers are the reference.
 
-## Current results (lint baseline)
+## Results from the first lint baseline (v1)
+
+The keyword checker has since been upgraded. [KEYWORD-CHECKER.md](KEYWORD-CHECKER.md) has the v2 results: rewrites now average 8.6, with 10 of 11 passing, and Omnigent's messages average 2.0.
 
 | Set | Mean score | Passing |
 |---|---|---|
 | Omnigent's current messages | 1.2 / 10 | 0 of 11 |
 | Proposed rewrites | 6.6 / 10 | 3 of 11 |
 
-## Why the rewrites score 6.6
+## Why the rewrites scored 6.6 in v1
 
 Most of the lost points are scorer limits. A few are real gaps in the rewrites or the rubric.
 
@@ -71,7 +73,7 @@ The lint score is a diagnostic. It doesn't need to reach a particular number, an
 - [ ] Reconcile the two sets and note every disagreement as a possible rubric change.
 
 ### Next
-- [ ] Add a `not_applicable` field to the rubric for each message type (title, tooltip, card, resolved label) and update `lint.py` and `judge.py` to score out of the applicable points.
+- [x] Add applicability by surface (title, tooltip, card, resolved label) to the rubric, `lint.py`, and `judge.py`, scoring out of the applicable points. Done in lint v2.
 - [ ] Fix the real gaps: add what Codex does next to `r-gh-deny`, the session name to `r-blast-deny` and `r-expired`, the timeout to `r-blast-ask`, and the last activity to `r-host`.
 - [ ] Re-run the lint baseline and record the new scores.
 

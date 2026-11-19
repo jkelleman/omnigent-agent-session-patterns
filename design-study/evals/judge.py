@@ -19,7 +19,7 @@ import re
 import sys
 from pathlib import Path
 
-from lint import CHECKS, load, passes, summary, table
+from lint import APPLIES, CHECKS, load, passes, summary, table, total
 
 HERE = Path(__file__).parent
 RUBRIC = (HERE / "rubric.md").read_text()
@@ -35,13 +35,16 @@ surface without tapping. Reply with the JSON object described in the rubric and 
 <message>
 Kind: {kind}
 Surface: {surface}
+Checks that apply on this surface: {applies}
 What else is visible: {context}
 Text: {text}
 </message>"""
 
 
 def build_prompt(row: dict) -> str:
-    return PROMPT.format(rubric=RUBRIC, **{k: row[k] for k in ("kind", "surface", "context", "text")})
+    applies = ", ".join(APPLIES.get(row["surface"], CHECKS))
+    return PROMPT.format(rubric=RUBRIC, applies=applies,
+                         **{k: row[k] for k in ("kind", "surface", "context", "text")})
 
 
 def judge(client, model: str, row: dict) -> dict:
@@ -54,7 +57,11 @@ def judge(client, model: str, row: dict) -> dict:
     if not match:
         raise ValueError(f"{row['id']}: judge returned no JSON:\n{raw}")
     data = json.loads(match.group(0))
+    applies = APPLIES.get(row["surface"], CHECKS)
     for c in CHECKS:
+        if c not in applies:
+            data[c] = None  # not scored on this surface
+            continue
         data[c] = int(data[c])
         if data[c] not in (0, 1, 2):
             raise ValueError(f"{row['id']}: {c} out of range")
@@ -64,17 +71,24 @@ def judge(client, model: str, row: dict) -> dict:
 def agreement(scores: dict, human_csv: Path) -> str:
     """Exact agreement and mean absolute difference per check, judge vs. human."""
     with human_csv.open() as f:
-        human = {r["id"]: r for r in csv.DictReader(f) if all(r.get(c, "").strip() for c in CHECKS)}
+        human = {r["id"]: r for r in csv.DictReader(f) if any(r.get(c, "").strip() for c in CHECKS)}
     ids = [i for i in human if i in scores]
     if not ids:
         return "No overlapping human scores yet. Fill in human_scores.csv to measure agreement."
     lines = [f"Judge vs. human on {len(ids)} messages:", "",
              "| check | exact agreement | mean abs. diff |", "|---|---|---|"]
     for c in CHECKS:
-        diffs = [abs(scores[i][c] - int(human[i][c])) for i in ids]
+        pairs = [(scores[i][c], human[i][c]) for i in ids
+                 if scores[i][c] is not None and human[i][c].strip().lower() not in ("", "n/a")]
+        if not pairs:
+            lines.append(f"| {c} | n/a | n/a |")
+            continue
+        diffs = [abs(j - int(h)) for j, h in pairs]
         exact = sum(d == 0 for d in diffs) / len(diffs)
         lines.append(f"| {c} | {exact:.0%} | {sum(diffs) / len(diffs):.2f} |")
-    flips = [i for i in ids if passes(scores[i]) != passes({c: int(human[i][c]) for c in CHECKS})]
+    def human_sc(i):
+        return {c: (None if human[i][c].strip().lower() in ("", "n/a") else int(human[i][c])) for c in CHECKS}
+    flips = [i for i in ids if passes(scores[i]) != passes(human_sc(i))]
     lines += ["", f"Pass/fail disagreements: {', '.join(flips) if flips else 'none'}"]
     return "\n".join(lines)
 
@@ -104,7 +118,7 @@ def main():
         data = judge(client, args.model, r)
         scores[r["id"]] = {c: data[c] for c in CHECKS}
         rationales[r["id"]] = data.get("rationale", "")
-        print(f"{r['id']:16} {sum(scores[r['id']].values()):>2}/10  {rationales[r['id']]}")
+        print(f"{r['id']:16} {total(scores[r['id']]):>4}/10  {rationales[r['id']]}")
 
     out_dir = HERE / "results"
     out_dir.mkdir(exist_ok=True)

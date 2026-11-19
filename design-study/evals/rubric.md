@@ -16,7 +16,19 @@ Each check is scored 0, 1, or 2.
 | **Consequence** | Can the reader tell what each choice does, including doing nothing? | Unstated | Partly stated (for example, the result of yes, but not of silence) | The result of each answer, or the state of the work after the event |
 | **Next move** | Does the reader know what they can do now? | No move, or a move this reader can't take (like editing a config they don't own) | A move is implied but not stated | One clear move this reader can take, or a clear "nothing needed" |
 
-**Total:** out of 10. A message **passes** at 7 or higher with no check scored 0.
+## Which checks apply
+
+Different surfaces carry different amounts of a message. Score only the checks that apply, and mark the rest `null`.
+
+| Surface | Checks that apply | Why |
+|---|---|---|
+| Approval card message | All five | The full request |
+| Error in transcript | All five | The full report |
+| Approval card title | Actor, Action | The card body carries the cause, consequence, and answer controls |
+| Sidebar badge tooltip | Actor, Action, Consequence, Next move | A status summary; the cause lives in the session |
+| Resolved approval label | Actor, Action, Consequence, Next move | The cause was stated on the original request |
+
+**Total:** the applicable points, scaled to 10. A message **passes** at 7 or higher with no applicable check scored 0.
 
 ## Scoring notes
 
@@ -29,5 +41,6 @@ Each check is scored 0, 1, or 2.
 
 ```json
 {"actor": 0, "action": 0, "cause": 0, "consequence": 0, "next_move": 0,
+ "_note": "use null for a check that doesn't apply on this surface",
  "rationale": "One or two sentences on the weakest check."}
 ```
