@@ -6,6 +6,8 @@ An independent design study of [Omnigent](https://github.com/omnigent-ai/omnigen
 
 > **Summary:** Five findings in how Omnigent handles human-in-the-loop approvals, policy blocks, and session status. Approval scope goes from 10+ labels to 3. None of the 58 readable built-in policy messages name the rule's owner, and the proposed three-layer pattern adds one to every message. Rewritten messages score 8.6 out of 10 against Omnigent's 2.0 on a keyword baseline I built; human and LLM-judge scoring are next. Live [mobile](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/) and [desktop](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/desktop.html) prototypes.
 
+**Contribution to Omnigent:** [pull request #14464](https://github.com/omnigent-ai/omnigent/pull/14464) makes question card titles consistent across harnesses, from [issue #14463](https://github.com/omnigent-ai/omnigent/issues/14463).
+
 <table>
 <tr><th>Omnigent today</th><th>Proposed</th></tr>
 <tr>
