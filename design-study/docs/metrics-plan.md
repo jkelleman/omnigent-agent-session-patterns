@@ -43,7 +43,7 @@ These should not get worse:
 
 1. **Baseline.** Ship the new event attributes alone for two weeks to get baselines for every metric. The [validation sessions](validation-plan.md) give early qualitative baselines in the meantime.
 2. **Staged rollout behind a feature flag.** Release each pattern behind its own flag (scope ladder, timeout display, policy owner, status states), so its effect can be measured separately.
-3. **Compare.** For each flag, compare flagged and unflagged sessions on its primary metric and the guardrails. Internal Databricks engineering use gives a large enough sample for the approval metrics within a few weeks.
+3. **Compare.** For each flag, compare flagged and unflagged sessions on its primary metric and the guardrails. Usage across Databricks' own engineering team is likely large enough to show changes in the approval metrics within a few weeks; confirm with a power calculation from the baseline data.
 4. **Decide.** Keep, revise, or roll back each pattern based on its primary metric and guardrails.
 
 ## Message quality as a leading indicator

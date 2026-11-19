@@ -63,11 +63,11 @@ Before the tap, the "remember" button changes from card to card:
 
 <table>
 <tr>
-<td><img src="images/omnigent/approval-codex-command.png" alt="Buttons: Approve, Approve and remember, Reject"></td>
+<td><img src="images/omnigent/approval-codex-command.png" alt="Buttons: Approve, Approve and remember commands starting with a prefix, Reject"></td>
 <td><img src="images/omnigent/approval-remember-domain.png" alt="Buttons: Approve, Approve & don't ask again for storybook.js.org, Reject"></td>
 </tr>
 <tr>
-<td>"Approve and remember"</td>
+<td>"Approve and remember commands starting with [prefix]"</td>
 <td>"Approve & don't ask again for storybook.js.org"</td>
 </tr>
 </table>
@@ -113,7 +113,7 @@ The numbers mark the seven parts of a request. See [agent-states.md › Anatomy]
 <table>
 <tr><th>Proposed: the deadline while it's pending</th><th>Proposed: the outcome after it passes</th></tr>
 <tr>
-<td width="50%"><img src="images/proposed/approve.png" alt="Proposed approval with an amber deadline bar: 'If you don't answer by 9:41 PM tomorrow, the push will be denied and Polly will stop this step.'"></td>
+<td width="50%"><img src="images/proposed/approve.png" alt="Proposed approval with a pink deadline bar: 'If you don't answer by 9:41 PM tomorrow, the push will be denied and Polly will stop this step.'"></td>
 <td width="50%"><img src="images/proposed/expired.png" alt="Proposed expired state: 'Nobody answered, so the push was denied', with what happened next and an Ask again button"></td>
 </tr>
 </table>
