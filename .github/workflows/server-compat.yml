@@ -85,11 +85,17 @@ jobs:
         shell: bash
         run: |
           # Latest final (non-prerelease) tag by version sort.
-          tag=$(git tag --sort=-v:refname \
-            | grep -viE '(^|[^a-z])(rc|dev|pre)[0-9]' \
-            | head -1)
+          tags=$(git tag --sort=-v:refname)
+          tag=""
+          while IFS= read -r candidate; do
+            [ -z "$candidate" ] && continue
+            [[ "${candidate,,}" =~ (^|[^a-z])(rc|dev|pre)[0-9] ]] && continue
+            tag="$candidate"
+            break
+          done <<< "$tags"
           if [ -z "$tag" ]; then
-            echo "No stable release tag found" >&2; exit 1
+            echo "No stable release tag found; skipping compatibility smoke jobs" >&2
+            exit 0
           fi
           echo "latest_tag=$tag" >> "$GITHUB_OUTPUT"
           echo "Resolved latest stable tag: $tag" >&2
@@ -97,6 +103,7 @@ jobs:
   compat-smoke-config1:
     name: "Compat smoke – Config 1 (new server / old runner ${{ needs.resolve-latest.outputs.latest_tag }})"
     needs: resolve-latest
+    if: needs.resolve-latest.outputs.latest_tag != ''
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -113,6 +120,7 @@ jobs:
   compat-smoke-config2:
     name: "Compat smoke – Config 2 (new runner / old server ${{ needs.resolve-latest.outputs.latest_tag }})"
     needs: resolve-latest
+    if: needs.resolve-latest.outputs.latest_tag != ''
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -129,6 +137,7 @@ jobs:
   compat-smoke-ui-config-a:
     name: "Compat smoke – UI Config A (new SPA / old server ${{ needs.resolve-latest.outputs.latest_tag }})"
     needs: resolve-latest
+    if: needs.resolve-latest.outputs.latest_tag != ''
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -145,6 +154,7 @@ jobs:
   compat-smoke-ui-config-b:
     name: "Compat smoke – UI Config B (old SPA ${{ needs.resolve-latest.outputs.latest_tag }} / new server)"
     needs: resolve-latest
+    if: needs.resolve-latest.outputs.latest_tag != ''
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
