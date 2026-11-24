@@ -2,6 +2,11 @@
 
 # Agent session patterns: a design study
 
+[![Live prototype: mobile](https://img.shields.io/badge/live%20prototype-mobile-2e8a3a.svg)](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/)
+[![Live prototype: desktop](https://img.shields.io/badge/live%20prototype-desktop-2e8a3a.svg)](https://jkelleman.github.io/omnigent-agent-session-patterns/design-study/prototype/desktop.html)
+[![Evals: Python](https://img.shields.io/badge/evals-Python-3776AB.svg?logo=python&logoColor=white)](evals)
+[![Independent study](https://img.shields.io/badge/independent-not%20endorsed%20by%20Databricks-lightgrey.svg)](#agent-session-patterns-a-design-study)
+
 **Interaction and content patterns for supervising coding agents asynchronously.**
 
 An independent design study of [Omnigent](https://github.com/omnigent-ai/omnigent), the open-source meta-harness from Databricks. Databricks has not reviewed or endorsed it.
