@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/banner.png" alt="Approvals people can act on: a design study of Omnigent approvals, with an approval card that shows a deadline, names the rule owner and offers three scopes."></p>
+
 # Agent session patterns: a design study
 
 **Interaction and content patterns for supervising coding agents asynchronously.**
