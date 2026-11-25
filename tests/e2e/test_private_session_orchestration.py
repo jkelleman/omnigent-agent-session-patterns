@@ -72,13 +72,15 @@ def test_private_manager_launch_send_read_and_sharing(
                     ),
                 )
 
-                def configure(marker, responses):
+                def configure(marker, responses, *, worker=False):
                     configure_mock_llm(
                         mock,
                         responses,
                         match=marker,
                         required_tools=[
-                            "mcp__omnigent" if harness == "codex-native" else "sys_session_message"
+                            ("exec_command" if worker else "mcp__omnigent")
+                            if harness == "codex-native"
+                            else "sys_session_message"
                         ],
                     )
 
@@ -173,8 +175,10 @@ def test_private_manager_launch_send_read_and_sharing(
                         created = response.json()
                     sessions.append(created["session_id"])
                 manager, worker = sessions
+                # The newline distinguishes worker input from JSON-encoded approval requests.
                 if not orchestration_enabled:
-                    configure("BEFORE_SWITCH_TASK", [{"text": "BEFORE_SWITCH_RESULT"}])
+                    worker_task = "BEFORE_SWITCH_TASK\nHandle this task."
+                    configure(worker_task, [{"text": "BEFORE_SWITCH_RESULT"}], worker=True)
                     configure(
                         "MANAGER_BEFORE_SWITCH",
                         [
@@ -182,7 +186,7 @@ def test_private_manager_launch_send_read_and_sharing(
                                 "tool_calls": [
                                     tool(
                                         "sys_session_message",
-                                        {"session_id": worker, "message": "BEFORE_SWITCH_TASK"},
+                                        {"session_id": worker, "message": worker_task},
                                         "before-switch",
                                     )
                                 ]
@@ -244,7 +248,8 @@ def test_private_manager_launch_send_read_and_sharing(
                     json={"user_id": "editor@example.test", "level": 2},
                 )
                 assert shared.status_code == 200, shared.text
-                configure("WORKER_TASK", [{"text": "WORKER_RESULT"}])
+                worker_task = "WORKER_TASK\nHandle this task."
+                configure(worker_task, [{"text": "WORKER_RESULT"}], worker=True)
                 configure(
                     "MANAGER_SEND",
                     [
@@ -252,7 +257,7 @@ def test_private_manager_launch_send_read_and_sharing(
                             "tool_calls": [
                                 tool(
                                     "sys_session_message",
-                                    {"session_id": worker, "message": "WORKER_TASK"},
+                                    {"session_id": worker, "message": worker_task},
                                     "send",
                                 )
                             ]
@@ -292,7 +297,8 @@ def test_private_manager_launch_send_read_and_sharing(
                 project_id = project.json()["id"]
                 filed = client.patch(f"/v1/sessions/{manager}", json={"project_id": project_id})
                 assert filed.status_code == 200, filed.text
-                configure("NEW_WORKER_TASK", [{"text": "NEW_WORKER_RESULT"}])
+                new_worker_task = "NEW_WORKER_TASK\nHandle this task."
+                configure(new_worker_task, [{"text": "NEW_WORKER_RESULT"}], worker=True)
                 configure(
                     "MANAGER_SEND_READ_CREATE",
                     [
@@ -304,7 +310,7 @@ def test_private_manager_launch_send_read_and_sharing(
                                         "agent_id": agent,
                                         "placement": "same_host",
                                         "title": "Independent worker",
-                                        "message": "NEW_WORKER_TASK",
+                                        "message": new_worker_task,
                                     },
                                     "create",
                                 )
